@@ -1,0 +1,44 @@
+# 编译输出
+**/target/
+**/out/
+**/build/
+
+# IDE 配置文件（团队共享的建议保留部分，但通常忽略）
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# 日志文件
+*.log
+logs/
+
+# 操作系统生成文件
+.DS_Store
+Thumbs.db
+
+# 前端依赖与构建结果
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env.local
+frontend/.env.*.local
+
+# 后端本地配置（例如不同环境的数据库密码）
+**/application-local.yml
+**/application-dev.yml
+
+# 打包文件
+*.jar
+*.war
+*.zip
+*.tar.gz
+
+# 临时文件
+*.tmp
+*.swp
+*~
