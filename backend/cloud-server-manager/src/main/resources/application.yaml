@@ -1,3 +1,13 @@
 spring:
   application:
     name: cloud-server-manager
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cloud_server
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
