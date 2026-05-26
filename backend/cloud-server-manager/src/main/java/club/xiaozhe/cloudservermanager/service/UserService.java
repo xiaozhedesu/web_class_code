@@ -5,6 +5,7 @@ import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,11 @@ public class UserService {
      * 分页查询用户，支持姓名模糊搜索
      */
     public Page<User> listUsers(int page, int size, String keyword) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
         if (keyword == null || keyword.isEmpty()) {
-            return userRepository.findAll(PageRequest.of(page, size));
+            return userRepository.findAll(pageRequest);
         }
-        return userRepository.findByRealNameContaining(keyword, PageRequest.of(page, size));
+        return userRepository.findByRealNameContaining(keyword, pageRequest);
     }
 
     /**
