@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/utils/axios'
+import { formatDateTime } from '@/utils/format'
 
 const ROLE_MAP: Record<string, string> = {
   ADMIN: '管理员',
@@ -120,7 +121,11 @@ onMounted(fetchUsers)
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" min-width="180" />
+        <el-table-column prop="createTime" label="创建时间" min-width="180">
+          <template #default="{ row }">
+            {{ formatDateTime(row.createTime) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="160">
           <template #default="{ row }">
             <el-button size="small" @click="handleEdit(row)">编辑</el-button>

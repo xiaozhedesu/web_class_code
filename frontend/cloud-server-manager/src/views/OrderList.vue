@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import api from '@/utils/axios'
+import { formatDateTime } from '@/utils/format'
 
 interface Order {
   id: number
@@ -126,7 +127,11 @@ onMounted(fetchOrders)
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="orderTime" label="下单时间" min-width="180" />
+        <el-table-column prop="orderTime" label="下单时间" min-width="180">
+          <template #default="{ row }">
+            {{ formatDateTime(row.orderTime) }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="isAdmin" label="操作" width="80">
           <template #default="{ row }">
             <el-button size="small" @click="openStatusEdit(row)">状态</el-button>
