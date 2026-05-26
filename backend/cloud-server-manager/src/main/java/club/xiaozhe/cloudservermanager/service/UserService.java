@@ -51,6 +51,13 @@ public class UserService {
     }
 
     /**
+     * 删除用户
+     */
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
+    }
+
+    /**
      * 判断用户是否存在
      */
     public boolean existsById(Integer id) {

@@ -2,6 +2,7 @@ package club.xiaozhe.cloudservermanager.controller;
 
 import club.xiaozhe.cloudservermanager.dto.LoginRequest;
 import club.xiaozhe.cloudservermanager.dto.LoginResponse;
+import club.xiaozhe.cloudservermanager.dto.RegisterRequest;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
@@ -45,6 +46,31 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
         return ResponseEntity.ok(new LoginResponse(token, user.getUsername(), user.getRole()));
+    }
+
+    /**
+     * 用户注册
+     * POST /api/auth/register
+     */
+    @PostMapping("/auth/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (request.username() == null || request.password() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "用户名和密码不能为空"));
+        }
+
+        if (userRepository.findByUsername(request.username()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "用户名已存在"));
+        }
+
+        User user = new User();
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setRealName(request.realName());
+        user.setPhone(request.phone());
+        user.setRole("USER");
+        userRepository.save(user);
+
+        return ResponseEntity.ok(UserResponse.from(user));
     }
 
     /**

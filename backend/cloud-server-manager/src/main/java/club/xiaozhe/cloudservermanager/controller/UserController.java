@@ -58,4 +58,26 @@ public class UserController {
         userService.updateUser(user, request);
         return ResponseEntity.ok(UserResponse.from(user));
     }
+
+
+    /**
+     * 删除用户
+     * DELETE /api/admin/users/{id}
+     */
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable Integer id) {
+        if (!userService.existsById(id)) {
+            return ResponseEntity.status(404).body(Map.of("message", "用户不存在"));
+        }
+        userService.deleteUser(id);
+        return ResponseEntity.ok(Map.of("message", "删除成功"));
+    }
+
+    /**
+     * 捕获无 ID 的删除请求，返回友好提示
+     */
+    @DeleteMapping({"/users", "/users/"})
+    public ResponseEntity<Map<String, Object>> deleteUserWithoutId() {
+        return ResponseEntity.badRequest().body(Map.of("message", "缺少用户 ID"));
+    }
 }
