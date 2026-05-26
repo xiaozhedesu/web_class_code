@@ -18,6 +18,6 @@ public class User {
     private String phone;
     private String role;
 
-    @Column(name = "create_time")
+    @Column(name = "create_time", insertable = false, updatable = false)
     private LocalDateTime createTime;
 }
