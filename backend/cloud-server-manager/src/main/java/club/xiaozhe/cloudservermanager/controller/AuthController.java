@@ -1,5 +1,8 @@
 package club.xiaozhe.cloudservermanager.controller;
 
+import club.xiaozhe.cloudservermanager.dto.LoginRequest;
+import club.xiaozhe.cloudservermanager.dto.LoginResponse;
+import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
@@ -9,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -29,69 +31,33 @@ public class AuthController {
     /**
      * 用户登录
      * POST /api/auth/login
-     * Body: { "username": "admin", "password": "123456" }
      */
     @PostMapping("/auth/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest) {
-        String username = loginRequest.get("username");
-        String password = loginRequest.get("password");
-
-        // 参数校验
-        if (username == null || password == null) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("message", "用户名和密码不能为空");
-            return ResponseEntity.badRequest().body(error);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        if (request.username() == null || request.password() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "用户名和密码不能为空"));
         }
 
-        // 查用户
-        User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("message", "用户名或密码错误");
-            return ResponseEntity.status(401).body(error);
+        User user = userRepository.findByUsername(request.username()).orElse(null);
+        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
+            return ResponseEntity.status(401).body(Map.of("message", "用户名或密码错误"));
         }
 
-        // 验证密码
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("message", "用户名或密码错误");
-            return ResponseEntity.status(401).body(error);
-        }
-
-        // 生成 JWT
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("token", token);
-        result.put("username", user.getUsername());
-        result.put("role", user.getRole());
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new LoginResponse(token, user.getUsername(), user.getRole()));
     }
 
     /**
      * 获取当前登录用户信息（需 JWT 认证）
      * GET /api/user/me
-     * Header: Authorization: Bearer <token>
      */
     @GetMapping("/user/me")
-    public ResponseEntity<Map<String, Object>> currentUser() {
+    public ResponseEntity<?> currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        User user = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(auth.getName()).orElse(null);
         if (user == null) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("message", "用户不存在");
-            return ResponseEntity.status(404).body(error);
+            return ResponseEntity.status(404).body(Map.of("message", "用户不存在"));
         }
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", user.getId());
-        result.put("username", user.getUsername());
-        result.put("realName", user.getRealName());
-        result.put("phone", user.getPhone());
-        result.put("role", user.getRole());
-        result.put("createTime", user.getCreateTime());
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(UserResponse.from(user));
     }
 }
