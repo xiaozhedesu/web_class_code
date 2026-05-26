@@ -26,6 +26,6 @@ public class Order {
 
     private String status;
 
-    @Column(name = "order_time")
+    @Column(name = "order_time", insertable = false, updatable = false)
     private LocalDateTime orderTime;
 }
