@@ -6,6 +6,8 @@ import club.xiaozhe.cloudservermanager.dto.RegisterRequest;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.InvalidLoginValueException;
+import club.xiaozhe.cloudservermanager.exception.InvalidValueException;
+import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
@@ -57,19 +59,41 @@ public class AuthController {
      */
     @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        if (request.username() == null || request.password() == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "用户名和密码不能为空"));
+        if (request.username() == null || request.username().isEmpty() ||
+                request.password() == null || request.password().isEmpty()) {
+            throw new InvalidValueException("用户名和密码不能为空！");
         }
 
         if (userRepository.findByUsername(request.username()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "用户名已存在"));
+            throw new InvalidValueException("用户名已存在！");
+        }
+
+        final String username = request.username();
+        if (username.length() < 6 || username.length() > 30) {
+            throw new InvalidValueException("用户名长度限制为6~30！");
+        }
+        if (!username.matches("[a-zA-Z]+")) {
+            throw new InvalidValueException("用户名只允许使用英文字母！");
+        }
+
+        final String password = request.password();
+        if (password.length() < 6 || password.length() > 64) {
+            throw new InvalidValueException("密码长度限制为6~64！");
+        }
+        if (!password.matches("[a-zA-Z0-9_]+")) {
+            throw new InvalidValueException("密码只允许为数字、字母和下划线（_）组合！");
+        }
+
+        final String phone = request.phone();
+        if (!phone.matches("[^1[3456789]\\d{9}$]")) {
+            throw new InvalidValueException("手机号码不是一个合法的中国手机号码！");
         }
 
         User user = new User();
-        user.setUsername(request.username());
-        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
         user.setRealName(request.realName());
-        user.setPhone(request.phone());
+        user.setPhone(phone);
         user.setRole("USER");
         userRepository.save(user);
 
@@ -85,7 +109,7 @@ public class AuthController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElse(null);
         if (user == null) {
-            return ResponseEntity.status(404).body(Map.of("message", "用户不存在"));
+            throw new UserNotFoundException(auth.getName());
         }
         return ResponseEntity.ok(UserResponse.from(user));
     }
