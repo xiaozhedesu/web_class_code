@@ -9,6 +9,23 @@ const router = useRouter();
 const form = ref({ username: "", password: "", realName: "", phone: "" });
 const loading = ref(false);
 
+const rules = {
+    username: [
+        { required: true, message: "用户名不能为空", trigger: "blur" },
+        { min: 6, max: 30, message: "长度限制6~30", trigger: "blur" },
+        { pattern: /^[a-z]+$/, message: "只能包含小写字母", trigger: "blur" },
+    ],
+    password: [
+        { required: true, message: "密码不能为空", trigger: "blur" },
+        { min: 6, max: 64, message: "长度限制6~64", trigger: "blur" },
+        { pattern: /^[a-zA-Z0-9_]+$/, message: "只能包含数字、字母、下划线", trigger: "blur" },
+    ],
+    phone: [
+        { required: true, message: "手机号不能为空", trigger: "blur" },
+        { pattern: /^1[3-9]\d{9}$/, message: "请输入有效的中国手机号", trigger: "blur" },
+    ],
+};
+
 const handleRegister = async () => {
     if (!form.value.username || !form.value.password) {
         ElMessage.warning("用户名和密码不能为空");
@@ -31,16 +48,17 @@ const handleRegister = async () => {
             <h2>用户注册</h2>
             <el-form
                 :model="form"
+                :rules="rules"
                 @keyup.enter="handleRegister"
             >
-                <el-form-item>
+                <el-form-item prop="username">
                     <el-input
                         v-model="form.username"
                         placeholder="用户名"
                         :prefix-icon="User"
                     />
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="password">
                     <el-input
                         v-model="form.password"
                         type="password"
@@ -56,7 +74,7 @@ const handleRegister = async () => {
                         :prefix-icon="UserFilled"
                     />
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="phone">
                     <el-input
                         v-model="form.phone"
                         placeholder="手机号"
