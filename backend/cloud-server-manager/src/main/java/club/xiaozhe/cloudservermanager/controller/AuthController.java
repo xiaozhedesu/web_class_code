@@ -85,7 +85,7 @@ public class AuthController {
         }
 
         final String phone = request.phone();
-        if (!phone.matches("[^1[3456789]\\d{9}$]")) {
+        if (!phone.matches("^1[3456789]\\d{9}$")) {
             throw new InvalidValueException("手机号码不是一个合法的中国手机号码！");
         }
 
