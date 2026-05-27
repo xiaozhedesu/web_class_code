@@ -2,6 +2,8 @@ package club.xiaozhe.cloudservermanager.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -26,6 +28,7 @@ public class Order {
 
     private String status;
 
-    @Column(name = "order_time", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "order_time", updatable = false)
     private LocalDateTime orderTime;
 }

@@ -2,6 +2,8 @@ package club.xiaozhe.cloudservermanager.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +20,7 @@ public class User {
     private String phone;
     private String role;
 
-    @Column(name = "create_time", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "create_time", updatable = false)
     private LocalDateTime createTime;
 }
