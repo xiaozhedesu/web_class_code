@@ -5,6 +5,7 @@ import club.xiaozhe.cloudservermanager.dto.LoginResponse;
 import club.xiaozhe.cloudservermanager.dto.RegisterRequest;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
+import club.xiaozhe.cloudservermanager.exception.InvalidLoginValueException;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,15 @@ public class AuthController {
      */
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        if (request.username() == null || request.password() == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "用户名和密码不能为空"));
+
+        if (request.username() == null || request.username().isEmpty() ||
+                request.password() == null || request.password().isEmpty()) {
+            throw new InvalidLoginValueException("用户名和密码不能为空！");
         }
 
         User user = userRepository.findByUsername(request.username()).orElse(null);
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
-            return ResponseEntity.status(401).body(Map.of("message", "用户名或密码错误"));
+            throw new InvalidLoginValueException("用户名或密码错误！");
         }
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
