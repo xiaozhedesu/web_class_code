@@ -6,6 +6,7 @@ import club.xiaozhe.cloudservermanager.entity.Order;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +39,7 @@ public class OrderController {
      * POST /api/user/orders
      */
     @PostMapping("/user/orders")
-    public ResponseEntity<?> createOrder(@RequestBody CreateOrderRequest request) {
+    public ResponseEntity<?> createOrder(@RequestBody @Valid CreateOrderRequest request) {
         User user = currentUser();
         if (user == null) {
             return ResponseEntity.status(401).body(Map.of("message", "用户不存在"));

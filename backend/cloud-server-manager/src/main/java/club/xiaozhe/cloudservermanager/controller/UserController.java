@@ -4,6 +4,7 @@ import club.xiaozhe.cloudservermanager.dto.UpdateUserRequest;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class UserController {
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(
             @PathVariable Integer id,
-            @RequestBody UpdateUserRequest request) {
+            @RequestBody @Valid UpdateUserRequest request) {
 
         User user = userService.findById(id).orElse(null);
         if (user == null) {
