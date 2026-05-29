@@ -64,4 +64,12 @@ public class OrderService {
         order.setStatus(status);
         return orderRepository.save(order);
     }
+
+    /**
+     * 按 ID 查询订单
+     */
+    public Order findById(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+    }
 }

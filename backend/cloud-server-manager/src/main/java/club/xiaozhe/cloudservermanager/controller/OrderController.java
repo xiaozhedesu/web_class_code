@@ -4,6 +4,7 @@ import club.xiaozhe.cloudservermanager.dto.CreateOrderRequest;
 import club.xiaozhe.cloudservermanager.dto.OrderResponse;
 import club.xiaozhe.cloudservermanager.entity.Order;
 import club.xiaozhe.cloudservermanager.entity.User;
+import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.service.OrderService;
 import jakarta.validation.Valid;
@@ -108,6 +109,61 @@ public class OrderController {
         try {
             var order = orderService.updateStatus(id, status);
             User user = userRepository.findById(order.getUserId()).orElse(null);
+            return ResponseEntity.ok(OrderResponse.from(order, user));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    /**
+     * 用户查看单个订单
+     * GET /api/user/orders/{id}
+     */
+    @GetMapping("/user/orders/{id}")
+    public ResponseEntity<?> getMyOrder(@PathVariable Integer id) {
+        User user = currentUser();
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        try {
+            var order = orderService.findById(id);
+            if (!order.getUserId().equals(user.getId())) {
+                return ResponseEntity.status(403).body(Map.of("message", "无权查看该订单"));
+            }
+            return ResponseEntity.ok(OrderResponse.from(order, user));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    /**
+     * 用户修改自己订单状态（只能取消或支付）
+     * PUT /api/user/orders/{id}/status
+     */
+    @PutMapping("/user/orders/{id}/status")
+    public ResponseEntity<?> updateMyOrderStatus(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        User user = currentUser();
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        String status = body.get("status");
+        if (status == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "缺少 status 字段"));
+        }
+
+        Set<String> allowed = Set.of(Order.CANCELLED, Order.PAID);
+        if (!allowed.contains(status)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "无效的状态值，允许：PAID、CANCELLED"));
+        }
+
+        try {
+            var order = orderService.findById(id);
+            if (!order.getUserId().equals(user.getId())) {
+                return ResponseEntity.status(403).body(Map.of("message", "无权操作该订单"));
+            }
+            order = orderService.updateStatus(id, status);
             return ResponseEntity.ok(OrderResponse.from(order, user));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
