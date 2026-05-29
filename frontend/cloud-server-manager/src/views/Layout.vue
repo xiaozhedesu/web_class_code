@@ -18,7 +18,10 @@ const adminMenus = [
     { path: "/orders", label: "订单管理" },
 ];
 
-const userMenus = [{ path: "/orders", label: "我的订单" }];
+const userMenus = [
+    { path: "/catalog", label: "套餐列表" },
+    { path: "/orders", label: "我的订单" },
+];
 </script>
 
 <template>

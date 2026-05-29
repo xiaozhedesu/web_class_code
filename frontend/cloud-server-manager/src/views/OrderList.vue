@@ -16,13 +16,6 @@ interface Order {
     orderTime: string;
 }
 
-interface Server {
-    id: number;
-    model: string;
-    pricePerMonth: number;
-    isAvailable: boolean;
-}
-
 const orders = ref<Order[]>([]);
 const loading = ref(false);
 const isAdmin = localStorage.getItem("role") === "ADMIN";
@@ -74,52 +67,12 @@ const handleStatusSave = async () => {
     }
 };
 
-// 用户：创建订单
-const createDialogVisible = ref(false);
-const servers = ref<Server[]>([]);
-const selectedServer = ref<number | null>(null);
-const months = ref(1);
-
-const openCreate = async () => {
-    const res = await api.get("/servers");
-    servers.value = res.data.filter((s: Server) => s.isAvailable);
-    selectedServer.value = null;
-    months.value = 1;
-    createDialogVisible.value = true;
-};
-
-const handleCreate = async () => {
-    if (!selectedServer.value) {
-        ElMessage.warning("请选择服务器");
-        return;
-    }
-    try {
-        await api.post("/user/orders", { serverId: selectedServer.value, months: months.value });
-        ElMessage.success("下单成功");
-        createDialogVisible.value = false;
-        fetchOrders();
-    } catch {
-        // 错误已在拦截器处理
-    }
-};
-
 onMounted(fetchOrders);
 </script>
 
 <template>
     <div class="order-list">
         <el-card>
-            <div
-                class="toolbar"
-                v-if="!isAdmin"
-            >
-                <el-button
-                    type="primary"
-                    @click="openCreate"
-                    >新建订单</el-button
-                >
-            </div>
-
             <el-table
                 :data="orders"
                 v-loading="loading"
@@ -204,7 +157,7 @@ onMounted(fetchOrders);
             width="360px"
         >
             <el-form>
-                <el-form-item label="状态">
+                <el-form-item label="修改状态">
                     <el-select
                         v-model="newStatus"
                         style="width: 100%"
@@ -224,54 +177,6 @@ onMounted(fetchOrders);
                     type="primary"
                     @click="handleStatusSave"
                     >保存</el-button
-                >
-            </template>
-        </el-dialog>
-
-        <!-- 用户创建订单 -->
-        <el-dialog
-            v-model="createDialogVisible"
-            title="新建租赁订单"
-            width="420px"
-        >
-            <el-form>
-                <el-form-item label="服务器套餐">
-                    <el-select
-                        v-model="selectedServer"
-                        placeholder="请选择套餐"
-                        style="width: 100%"
-                    >
-                        <el-option
-                            v-for="s in servers"
-                            :key="s.id"
-                            :label="`${s.model} (￥${s.pricePerMonth}/月)`"
-                            :value="s.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="租赁月数">
-                    <el-input-number
-                        v-model="months"
-                        :min="1"
-                        :max="36"
-                        style="width: 100%"
-                    />
-                </el-form-item>
-                <el-form-item
-                    v-if="selectedServer"
-                    label="预估总价"
-                >
-                    <span style="font-size: 18px; color: #e6a23c; font-weight: bold">
-                        ￥{{ (servers.find((s) => s.id === selectedServer)?.pricePerMonth || 0) * months }}
-                    </span>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button @click="createDialogVisible = false">取消</el-button>
-                <el-button
-                    type="primary"
-                    @click="handleCreate"
-                    >下单</el-button
                 >
             </template>
         </el-dialog>

@@ -35,6 +35,11 @@ const router = createRouter({
                     component: () => import("@/views/OrderList.vue"),
                 },
                 {
+                    path: "catalog",
+                    name: "ServerCatalog",
+                    component: () => import("@/views/ServerCatalog.vue"),
+                },
+                {
                     path: "",
                     redirect: "/orders",
                 },
