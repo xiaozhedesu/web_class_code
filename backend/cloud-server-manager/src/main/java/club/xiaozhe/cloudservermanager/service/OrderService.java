@@ -36,7 +36,7 @@ public class OrderService {
         order.setServerId(serverId);
         order.setMonths(months);
         order.setTotalPrice(totalPrice);
-        order.setStatus("PENDING");
+        order.setStatus(Order.PENDING);
         return orderRepository.save(order);
     }
 

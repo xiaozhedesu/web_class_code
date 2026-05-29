@@ -1,5 +1,6 @@
 package club.xiaozhe.cloudservermanager.config;
 
+import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.filter.JwtAuthenticationFilter;
 import club.xiaozhe.cloudservermanager.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -67,7 +68,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servers").authenticated()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole(User.ADMIN)
                         .requestMatchers("/api/user/**").authenticated()
                         .anyRequest().authenticated()
                 )

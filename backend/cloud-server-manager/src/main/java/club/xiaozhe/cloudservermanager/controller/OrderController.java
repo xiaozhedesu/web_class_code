@@ -100,7 +100,7 @@ public class OrderController {
             return ResponseEntity.badRequest().body(Map.of("message", "缺少 status 字段"));
         }
 
-        Set<String> allowed = Set.of("PENDING", "PAID", "CANCELLED", "COMPLETED");
+        Set<String> allowed = Set.of(Order.PENDING, Order.PAID, Order.CANCELLED, Order.COMPLETED);
         if (!allowed.contains(status)) {
             return ResponseEntity.badRequest().body(Map.of("message", "无效的状态值，允许：PENDING、PAID、CANCELLED、COMPLETED"));
         }

@@ -45,7 +45,7 @@ public class AuthController {
         user.setPassword(request.password());
         user.setRealName(request.realName());
         user.setPhone(request.phone());
-        user.setRole("USER");
+        user.setRole(User.USER);
 
         return ResponseEntity.ok(UserResponse.from(authService.register(user)));
     }

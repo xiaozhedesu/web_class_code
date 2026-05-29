@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_order")
 public class Order {
+
+    public static final String PENDING = "PENDING";
+    public static final String PAID = "PAID";
+    public static final String CANCELLED = "CANCELLED";
+    public static final String COMPLETED = "COMPLETED";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
