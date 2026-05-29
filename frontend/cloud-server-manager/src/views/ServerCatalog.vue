@@ -42,13 +42,12 @@ const openBuy = (server: Server) => {
 const handleBuy = async () => {
   if (!selectedServer.value) return
   try {
-    await api.post('/user/orders', {
+    const res = await api.post('/user/orders', {
       serverId: selectedServer.value.id,
       months: months.value,
     })
-    ElMessage.success('下单成功')
     dialogVisible.value = false
-    router.push('/orders')
+    router.push(`/payment/${res.data.id}`)
   } catch {
     // 错误已在拦截器处理
   }
