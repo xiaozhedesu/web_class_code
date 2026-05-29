@@ -2,6 +2,7 @@ package club.xiaozhe.cloudservermanager.controller;
 
 import club.xiaozhe.cloudservermanager.dto.LoginRequest;
 import club.xiaozhe.cloudservermanager.dto.RegisterRequest;
+import club.xiaozhe.cloudservermanager.dto.UpdateUserRequest;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
@@ -61,6 +62,25 @@ public class AuthController {
         if (user == null) {
             throw new UserNotFoundException(auth.getName());
         }
+        return ResponseEntity.ok(UserResponse.from(user));
+    }
+
+    /**
+     * 修改当前用户信息
+     * PUT /api/user/me
+     */
+    @PutMapping("/user/me")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateUserRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName()).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        if (request.realName() != null) user.setRealName(request.realName());
+        if (request.phone() != null) user.setPhone(request.phone());
+        userRepository.save(user);
+
         return ResponseEntity.ok(UserResponse.from(user));
     }
 }
