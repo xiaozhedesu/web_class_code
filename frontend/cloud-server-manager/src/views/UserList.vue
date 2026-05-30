@@ -37,11 +37,11 @@ const editForm = ref({ realName: "", phone: "" });
 const fetchUsers = async () => {
     loading.value = true;
     try {
-        const res = await api.get("/admin/users", {
+        const res = (await api.get("/admin/users", {
             params: { page: currentPage.value - 1, size: pageSize.value, keyword: keyword.value },
-        });
-        users.value = res.data.content;
-        total.value = res.data.totalElements;
+        })) as any;
+        users.value = res.content;
+        total.value = res.totalElements;
     } finally {
         loading.value = false;
     }

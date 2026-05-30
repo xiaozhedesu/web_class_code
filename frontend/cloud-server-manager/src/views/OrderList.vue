@@ -36,8 +36,8 @@ const fetchOrders = async () => {
     loading.value = true;
     try {
         const url = isAdmin ? "/admin/orders" : "/user/orders";
-        const res = await api.get(url);
-        orders.value = res.data;
+        const res = await api.get(url) as any;
+        orders.value = res;
     } finally {
         loading.value = false;
     }
@@ -58,7 +58,7 @@ const openStatusEdit = (order: Order) => {
 const handleStatusSave = async () => {
     if (!currentOrder.value) return;
     try {
-        await api.put(`/admin/orders/${currentOrder.value.id}/status`, { status: newStatus.value });
+        await api.put(`/admin/orders/${currentOrder.value.id}/status`, { status: newStatus.value }) as any;
         ElMessage.success("修改成功");
         statusDialogVisible.value = false;
         fetchOrders();

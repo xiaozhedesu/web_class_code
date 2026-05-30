@@ -15,9 +15,16 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// 响应拦截器：统一处理错误
+// 响应拦截器：解包 ApiResponse 并统一处理错误
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        const { code, message, data } = response.data;
+        if (code === 200) {
+            return data; // 直接返回业务数据
+        }
+        ElMessage.error(message || "请求失败");
+        return Promise.reject(new Error(message));
+    },
     (error) => {
         const message = error.response?.data?.message || "请求失败";
         ElMessage.error(message);

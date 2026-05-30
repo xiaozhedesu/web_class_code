@@ -14,10 +14,10 @@ const handleLogin = async () => {
     }
     loading.value = true;
     try {
-        const res = await api.post("/auth/login", form.value);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("role", res.data.role);
-        if (res.data.role === "ADMIN") {
+        const res = await api.post("/auth/login", form.value) as any;
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("role", res.role);
+        if (res.role === "ADMIN") {
             router.push("/users");
         } else {
             router.push("/orders");

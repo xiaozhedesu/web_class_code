@@ -25,8 +25,8 @@ const form = ref({ model: "", cpu: "", ram: "", disk: "", pricePerMonth: 0, isAv
 const fetchServers = async () => {
     loading.value = true;
     try {
-        const res = await api.get("/servers");
-        servers.value = res.data;
+        const res = (await api.get("/servers")) as any;
+        servers.value = res;
     } finally {
         loading.value = false;
     }
@@ -52,10 +52,10 @@ const handleSave = async () => {
     }
     try {
         if (isEditing.value && editingServer.value) {
-            await api.put(`/admin/servers/${editingServer.value.id}`, form.value);
+            (await api.put(`/admin/servers/${editingServer.value.id}`, form.value)) as any;
             ElMessage.success("修改成功");
         } else {
-            await api.post("/admin/servers", form.value);
+            (await api.post("/admin/servers", form.value)) as any;
             ElMessage.success("新增成功");
         }
         dialogVisible.value = false;

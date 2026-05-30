@@ -12,8 +12,8 @@ const username = ref("");
 
 onMounted(async () => {
     try {
-        const res = await api.get("/user/me");
-        username.value = res.data.username;
+        const res = await api.get("/user/me") as any;
+        username.value = res.username;
     } catch {
         username.value = "unknown";
     }

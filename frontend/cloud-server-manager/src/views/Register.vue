@@ -33,7 +33,7 @@ const handleRegister = async () => {
     }
     loading.value = true;
     try {
-        await api.post("/auth/register", form.value);
+        await api.post("/auth/register", form.value) as any;
         ElMessage.success("注册成功，请登录");
         router.push("/login");
     } finally {

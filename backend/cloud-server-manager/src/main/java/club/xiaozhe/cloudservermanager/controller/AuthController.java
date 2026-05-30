@@ -1,15 +1,11 @@
 package club.xiaozhe.cloudservermanager.controller;
 
-import club.xiaozhe.cloudservermanager.dto.LoginRequest;
-import club.xiaozhe.cloudservermanager.dto.RegisterRequest;
-import club.xiaozhe.cloudservermanager.dto.UpdateUserRequest;
-import club.xiaozhe.cloudservermanager.dto.UserResponse;
+import club.xiaozhe.cloudservermanager.dto.*;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +27,8 @@ public class AuthController {
      * POST /api/auth/login
      */
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ApiResponse.success(authService.login(request));
     }
 
     /**
@@ -40,7 +36,7 @@ public class AuthController {
      * POST /api/auth/register
      */
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+    public ApiResponse<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
         User user = new User();
         user.setUsername(request.username());
         user.setPassword(request.password());
@@ -48,7 +44,7 @@ public class AuthController {
         user.setPhone(request.phone());
         user.setRole(User.USER);
 
-        return ResponseEntity.ok(UserResponse.from(authService.register(user)));
+        return ApiResponse.success(UserResponse.from(authService.register(user)));
     }
 
     /**
@@ -56,13 +52,13 @@ public class AuthController {
      * GET /api/user/me
      */
     @GetMapping("/user/me")
-    public ResponseEntity<?> currentUser() {
+    public ApiResponse<UserResponse> currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException(auth.getName());
         }
-        return ResponseEntity.ok(UserResponse.from(user));
+        return ApiResponse.success(UserResponse.from(user));
     }
 
     /**
@@ -70,7 +66,7 @@ public class AuthController {
      * PUT /api/user/me
      */
     @PutMapping("/user/me")
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateUserRequest request) {
+    public ApiResponse<UserResponse> updateProfile(@RequestBody UpdateUserRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElse(null);
         if (user == null) {
@@ -81,6 +77,6 @@ public class AuthController {
         if (request.phone() != null) user.setPhone(request.phone());
         userRepository.save(user);
 
-        return ResponseEntity.ok(UserResponse.from(user));
+        return ApiResponse.success(UserResponse.from(user));
     }
 }

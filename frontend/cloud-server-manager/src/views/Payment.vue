@@ -21,8 +21,8 @@ const processing = ref(false)
 const fetchOrder = async () => {
   loading.value = true
   try {
-    const res = await api.get(`/user/orders/${route.params.id}`)
-    order.value = res.data
+    const res = await api.get(`/user/orders/${route.params.id}`) as any
+    order.value = res
   } finally {
     loading.value = false
   }
@@ -32,7 +32,7 @@ const handleCancel = async () => {
   if (!order.value) return
   processing.value = true
   try {
-    await api.put(`/user/orders/${order.value.id}/status`, { status: 'CANCELLED' })
+    await api.put(`/user/orders/${order.value.id}/status`, { status: 'CANCELLED' }) as any
     ElMessage.info('订单已取消')
     router.push('/catalog')
   } finally {
@@ -44,7 +44,7 @@ const handlePay = async () => {
   if (!order.value) return
   processing.value = true
   try {
-    await api.put(`/user/orders/${order.value.id}/status`, { status: 'PAID' })
+    await api.put(`/user/orders/${order.value.id}/status`, { status: 'PAID' }) as any
     ElMessage.success('订单已支付')
     router.push('/orders')
   } finally {

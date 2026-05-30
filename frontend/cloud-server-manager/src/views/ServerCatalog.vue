@@ -26,8 +26,8 @@ const months = ref(1)
 const fetchServers = async () => {
   loading.value = true
   try {
-    const res = await api.get('/servers')
-    servers.value = res.data.filter((s: Server) => s.isAvailable)
+    const res = await api.get('/servers') as any
+    servers.value = res.filter((s: Server) => s.isAvailable)
   } finally {
     loading.value = false
   }
@@ -45,9 +45,9 @@ const handleBuy = async () => {
     const res = await api.post('/user/orders', {
       serverId: selectedServer.value.id,
       months: months.value,
-    })
+    }) as any
     dialogVisible.value = false
-    router.push(`/payment/${res.data.id}`)
+    router.push(`/payment/${res.id}`)
   } catch {
     // 错误已在拦截器处理
   }
