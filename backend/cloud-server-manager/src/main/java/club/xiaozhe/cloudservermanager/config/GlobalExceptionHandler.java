@@ -1,6 +1,8 @@
 package club.xiaozhe.cloudservermanager.config;
 
 import club.xiaozhe.cloudservermanager.dto.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import tools.jackson.databind.exc.UnrecognizedPropertyException;
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
      * 请求体 JSON 字段名不匹配时，返回友好的中文提示
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ApiResponse<Void> handleJsonParseError(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleJsonParseError(HttpMessageNotReadableException ex) {
         UnrecognizedPropertyException upe = findUnrecognizedPropertyException(ex);
 
         if (upe != null) {
@@ -30,11 +32,13 @@ public class GlobalExceptionHandler {
             String knownFields = upe.getKnownPropertyIds().stream()
                     .map(Object::toString)
                     .collect(Collectors.joining("、"));
-            return ApiResponse.error(400, "未知字段 \"" + unknownField + "\"，支持的字段：" + knownFields);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(400, "未知字段 \"" + unknownField + "\"，支持的字段：" + knownFields));
         }
 
         log.warn("JSON 解析失败，异常链:", ex);
-        return ApiResponse.error(400, "请求体格式错误，请检查 JSON 格式");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, "请求体格式错误，请检查 JSON 格式"));
     }
 
     /**
@@ -50,13 +54,14 @@ public class GlobalExceptionHandler {
      * 处理字段不合法错误，返回友好提示
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final String firstErrorMessage = e.getBindingResult().getFieldErrors().stream()
                 .sorted(Comparator.comparing(FieldError::getField))
                 .findFirst()
                 .map(FieldError::getDefaultMessage)
                 .orElse("参数校验失败");
 
-        return ApiResponse.error(400, firstErrorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, firstErrorMessage));
     }
 }
