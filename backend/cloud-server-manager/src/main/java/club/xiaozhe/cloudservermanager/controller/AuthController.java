@@ -66,7 +66,7 @@ public class AuthController {
      * PUT /api/user/me
      */
     @PutMapping("/user/me")
-    public ApiResponse<UserResponse> updateProfile(@RequestBody UpdateUserRequest request) {
+    public ApiResponse<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElse(null);
         if (user == null) {
