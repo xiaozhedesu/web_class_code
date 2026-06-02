@@ -2,7 +2,9 @@
 
 ## 简介
 
-这是一个web实训课的练习代码，使用ai（[hermes agent](https://hermes-agent.org/zh/) + deepseek-v4 pro）完成原型开发，使用 [apifox](https://apifox.com/?utm_source=bing&utm_medium=sem&utm_campaign=%E9%AB%98%E8%BD%AC%E5%8C%96%E8%AF%8D-%E4%BA%A7%E5%93%81&utm_content=Apifox&utm_term=apifox&search_term=apifox&msclkid=b4b4649e02fc161018010e8b71085508) 工具进行后端接口测试，同时给我提供学习素材。
+这是一个web实训课的练习代码，使用ai（[hermes agent](https://hermes-agent.org/zh/) + deepseek-v4
+pro）完成原型开发，使用 [apifox](https://apifox.com/?utm_source=bing&utm_medium=sem&utm_campaign=%E9%AB%98%E8%BD%AC%E5%8C%96%E8%AF%8D-%E4%BA%A7%E5%93%81&utm_content=Apifox&utm_term=apifox&search_term=apifox&msclkid=b4b4649e02fc161018010e8b71085508)
+工具进行后端接口测试，同时给我提供学习素材。
 
 ## 技术栈
 
@@ -27,12 +29,15 @@ psql -U <username> -d cloud_server -f init.sql
 
 使用idea打开项目后，通过maven获取依赖后运行`CloudServerManagerApplication`。
 
-可以通过环境变量配置数据库的账号密码信息，请保证信息与PostgreSQL配置一致。
+可以通过环境变量配置数据库的各种信息，请保证信息与PostgreSQL配置一致。
 
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `DB_USERNAME` | 数据库用户名 | `root` |
-| `DB_PASSWORD` | 数据库密码 | `postgres` |
+| 变量            | 说明     | 默认值            |
+|---------------|--------|----------------|
+| `DB_HOST`     | 数据库位置  | `localhost`    |
+| `DB_PORT`     | 数据库端口  | `5432`         |
+| `DB_NAME`     | 数据库名字  | `cloud_server` |
+| `DB_USERNAME` | 数据库用户名 | `root`         |
+| `DB_PASSWORD` | 数据库密码  | `postgres`     |
 
 ### 前端
 
