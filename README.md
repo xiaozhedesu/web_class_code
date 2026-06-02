@@ -9,8 +9,9 @@
 前端：Vue3 + TypeScript + Vite + Element Plus + Vue Router + Axios
 后端：java17 + Spring Boot 4.0.6 + Spring Security + JPA + JWT (jjwt)
 数据库：PostgreSQL 16
+接口测试:： Apifox
 
-## 运行
+## 开发环境运行
 
 首先clone本项目，然后按照以下步骤执行：
 
@@ -24,13 +25,14 @@ psql -U <username> -d cloud_server -f init.sql
 
 ### 后端
 
-使用idea打开项目后，通过maven获取依赖后，在运行配置中添加配置项保证项目正常运行。
+使用idea打开项目后，通过maven获取依赖后运行`CloudServerManagerApplication`。
+
+可以通过环境变量配置数据库的账号密码信息，请保证信息与PostgreSQL配置一致。
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
 | `DB_USERNAME` | 数据库用户名 | `root` |
 | `DB_PASSWORD` | 数据库密码 | `postgres` |
-| `JWT_SECRET` | JWT 签名密钥 | **必填**，用 `openssl rand -base64 64 \| tr -d '\n'` 生成 |
 
 ### 前端
 
