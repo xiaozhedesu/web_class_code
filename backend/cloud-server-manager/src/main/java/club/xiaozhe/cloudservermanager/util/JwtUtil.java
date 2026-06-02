@@ -1,60 +1,107 @@
 package club.xiaozhe.cloudservermanager.util;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
+    private final SecretKey key;
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    // 生成 token，携带用户名和角色
-    public String generateToken(String username, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // 从 token 中获取用户名（不验证有效性，由 validateToken 负责）
+    /**
+     * 生成 token，携带用户名和角色
+     *
+     * @param username 用户名
+     * @param role     角色
+     * @return token
+     */
+    public String generateToken(String username, String role) {
+        Map<String, Object> claims = Map.of(
+                "role", role
+        );
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
+                .compact();
+
+    }
+
+    /**
+     * 从 token 中获取用户名（不验证有效性，由 validateToken 负责）
+     *
+     * @param token token
+     * @return username
+     */
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    // 从 token 中获取角色
+    /**
+     * 从 token 中获取角色
+     *
+     * @param token token
+     * @return role
+     */
     public String getRoleFromToken(String token) {
         return getClaimFromToken(token, claims -> (String) claims.get("role"));
     }
 
-    // 从 token 中获取过期时间
+    /**
+     * 从 token 中获取过期时间
+     *
+     * @param token token
+     * @return expiration
+     */
     public Date getExpirationFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    // 通用方法：从 token 中提取指定 claim
+    /**
+     * 通用方法：从 token 中提取指定 claim
+     *
+     * @param token          token
+     * @param claimsResolver Claims的getxxx方法
+     * @param <T>            Claim值的类型
+     * @return Claim
+     */
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
-    // 解析 token 的所有 claims（忽略过期异常，因为需要从过期 token 中也能提取用户名）
+    /**
+     * 解析 token 的所有 claims
+     * （忽略过期异常，因为需要从过期 token 中也能提取用户名）
+     *
+     * @param token token
+     * @return Claims
+     */
     private Claims getAllClaimsFromToken(String token) {
         try {
-            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (ExpiredJwtException e) {
             // token 过期了但仍能提取 claims
             return e.getClaims();
@@ -63,11 +110,15 @@ public class JwtUtil {
 
     /**
      * 验证 token 是否有效
+     *
      * @return true 表示 token 有效，false 表示无效
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (SignatureException e) {
             // 签名不匹配
