@@ -62,7 +62,7 @@ const router = createRouter({
     ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
