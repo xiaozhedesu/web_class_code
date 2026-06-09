@@ -4,7 +4,8 @@ import club.xiaozhe.cloudservermanager.dto.UpdateUserRequest;
 import club.xiaozhe.cloudservermanager.dto.UserPageResponse;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
-import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
+import club.xiaozhe.cloudservermanager.exception.BusinessException;
+import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +44,7 @@ public class UserService {
     @Transactional
     public UserResponse updateUser(Integer id, UpdateUserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (request.realName() != null) {
             user.setRealName(request.realName());
@@ -59,7 +60,7 @@ public class UserService {
      * 删除用户
      */
     public void deleteUser(Integer id) {
-        if (!userRepository.existsById(id)) throw new UserNotFoundException();
+        if (!userRepository.existsById(id)) throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         userRepository.deleteById(id);
     }
 }

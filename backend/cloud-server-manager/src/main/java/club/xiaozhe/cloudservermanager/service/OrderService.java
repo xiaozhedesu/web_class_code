@@ -5,8 +5,8 @@ import club.xiaozhe.cloudservermanager.dto.OrderResponse;
 import club.xiaozhe.cloudservermanager.entity.Order;
 import club.xiaozhe.cloudservermanager.entity.Server;
 import club.xiaozhe.cloudservermanager.entity.User;
-import club.xiaozhe.cloudservermanager.exception.AuthException;
-import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
+import club.xiaozhe.cloudservermanager.exception.BusinessException;
+import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.OrderRepository;
 import club.xiaozhe.cloudservermanager.repository.ServerRepository;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
@@ -42,27 +42,28 @@ public class OrderService {
      */
     private User currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null)
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "未获取到登录信息");
         String username = auth.getName();
-        if (username == null) {
-            throw new UserNotFoundException();
-        }
+        if (username == null)
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         return userRepository.findByUsername(auth.getName())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     private Order getOrderById(Integer id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 
     private User getUserById(Integer id) {
         return userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
     }
 
     private Server getServerById(Integer id) {
         return serverRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("服务器套餐不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
     }
 
     /**
@@ -130,7 +131,8 @@ public class OrderService {
 
     /**
      * 用户修改指定订单状态
-     * @param id 订单id
+     *
+     * @param id     订单id
      * @param status 状态码
      * @return OrderResponse
      */
@@ -140,7 +142,7 @@ public class OrderService {
         // 这个函数本来就别扭，生产代码不会有这种走向来的吧，但是我没有写状态机逻辑
         Set<String> allowed = Set.of(Order.CANCELLED, Order.PAID);
         if (!allowed.contains(status)) {
-            throw new IllegalArgumentException("无效的状态值，用户只允许修改为PAID|CANCELLED");
+            throw new BusinessException(ErrorCode.STATUS_UNDEFINED, "用户只允许修改为PAID|CANCELLED");
         }
 
         Order order = getOrderById(id);
@@ -148,7 +150,7 @@ public class OrderService {
 
         User user = currentUser();
         if (!order.getUserId().equals(user.getId())) {
-            throw new AuthException("无权查看该订单");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "无权查看该订单");
         }
 
         return OrderResponse.from(orderRepository.save(order), user);
@@ -156,6 +158,7 @@ public class OrderService {
 
     /**
      * 用户查看单个订单
+     *
      * @param id 订单号
      * @return OrderResponse
      */
@@ -164,7 +167,7 @@ public class OrderService {
 
         Order order = getOrderById(id);
         if (!order.getUserId().equals(user.getId())) {
-            throw new AuthException("无权查看该订单");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "无权查看该订单");
         }
 
         return OrderResponse.from(order, user);

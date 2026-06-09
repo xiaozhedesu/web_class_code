@@ -3,7 +3,8 @@ package club.xiaozhe.cloudservermanager.service;
 import club.xiaozhe.cloudservermanager.dto.ServerRequest;
 import club.xiaozhe.cloudservermanager.dto.ServerResponse;
 import club.xiaozhe.cloudservermanager.entity.Server;
-import club.xiaozhe.cloudservermanager.exception.ServerNotFoundException;
+import club.xiaozhe.cloudservermanager.exception.BusinessException;
+import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.ServerRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class ServerService {
      */
     private Server getServer(Integer id) {
         return serverRepository.findById(id)
-                .orElseThrow(ServerNotFoundException::new);
+                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
     }
 
     public ServerResponse create(ServerRequest request) {

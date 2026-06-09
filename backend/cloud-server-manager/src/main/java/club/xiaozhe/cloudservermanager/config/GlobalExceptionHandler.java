@@ -1,25 +1,24 @@
 package club.xiaozhe.cloudservermanager.config;
 
 import club.xiaozhe.cloudservermanager.dto.ApiResponse;
+import club.xiaozhe.cloudservermanager.exception.BusinessException;
+import club.xiaozhe.cloudservermanager.exception.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import tools.jackson.databind.exc.UnrecognizedPropertyException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     /**
      * 请求体 JSON 字段名不匹配时，返回友好的中文提示
      */
@@ -61,12 +60,30 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .orElse("参数校验失败");
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(400, firstErrorMessage));
+        ErrorCode code = ErrorCode.INVALID_VALUE;
+        return ResponseEntity.status(code.getStatus())
+                .body(ApiResponse.error(code.getCode(), firstErrorMessage));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(ApiResponse.error(400, e.getMessage()));
+    /**
+     * 处理业务错误的处理类
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBusinessException(BusinessException e) {
+        ErrorCode code = e.getCode();
+        log.warn("发生业务异常：code = {}, message = {}", e.getCode(), e.getMessage());
+        return ResponseEntity.status(code.getStatus())
+                .body(ApiResponse.error(code.getCode(), e.getMessage()));
+    }
+
+    /**
+     * 处理运行时异常的处理类
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException re) {
+        log.error("发生未知错误", re);
+        ErrorCode code = ErrorCode.UNKNOWN_ERROR;
+        return ResponseEntity.status(code.getStatus())
+                .body(ApiResponse.error(code.getCode(), code.getMessage()));
     }
 }

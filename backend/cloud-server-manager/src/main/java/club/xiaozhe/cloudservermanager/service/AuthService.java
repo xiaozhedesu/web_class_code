@@ -2,9 +2,7 @@ package club.xiaozhe.cloudservermanager.service;
 
 import club.xiaozhe.cloudservermanager.dto.*;
 import club.xiaozhe.cloudservermanager.entity.User;
-import club.xiaozhe.cloudservermanager.exception.InvalidLoginValueException;
-import club.xiaozhe.cloudservermanager.exception.InvalidValueException;
-import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
+import club.xiaozhe.cloudservermanager.exception.*;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import org.springframework.security.core.Authentication;
@@ -45,7 +43,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.username()).orElse(null);
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new InvalidLoginValueException("用户名或密码错误！");
+            throw new BusinessException(ErrorCode.USERNAME_OR_PASSWORD_ERROR);
         }
 
         // 生成token
@@ -69,7 +67,7 @@ public class AuthService {
         user.setRole(User.USER);
 
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new InvalidValueException("用户名已存在");
+            throw new BusinessException(ErrorCode.INVALID_VALUE, String.format("用户名 %s 已存在", user.getUsername()));
         }
 
         // 进行密码加密
@@ -113,13 +111,9 @@ public class AuthService {
      */
     private User getUserInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(auth.getName()).orElse(null);
-
-        // 正常来说不会触发吧
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        return user;
+        if (auth == null)
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "未获取到登录信息");
+        return userRepository.findByUsername(auth.getName())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 }
