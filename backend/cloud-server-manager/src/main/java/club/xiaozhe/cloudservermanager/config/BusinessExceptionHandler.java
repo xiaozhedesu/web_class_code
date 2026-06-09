@@ -1,10 +1,7 @@
 package club.xiaozhe.cloudservermanager.config;
 
 import club.xiaozhe.cloudservermanager.dto.ApiResponse;
-import club.xiaozhe.cloudservermanager.exception.AuthException;
-import club.xiaozhe.cloudservermanager.exception.BusinessException;
-import club.xiaozhe.cloudservermanager.exception.InvalidLoginValueException;
-import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
+import club.xiaozhe.cloudservermanager.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +26,11 @@ public class BusinessExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(404, e.getMessage()));
+    }
+
+    @ExceptionHandler(ServerNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleServerNotFoundException(ServerNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(404, e.getMessage()));
     }
 
     @ExceptionHandler(BusinessException.class)

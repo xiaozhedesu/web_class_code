@@ -1,12 +1,14 @@
 package club.xiaozhe.cloudservermanager.service;
 
+import club.xiaozhe.cloudservermanager.dto.ServerRequest;
+import club.xiaozhe.cloudservermanager.dto.ServerResponse;
 import club.xiaozhe.cloudservermanager.entity.Server;
+import club.xiaozhe.cloudservermanager.exception.ServerNotFoundException;
 import club.xiaozhe.cloudservermanager.repository.ServerRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ServerService {
@@ -17,23 +19,44 @@ public class ServerService {
         this.serverRepository = serverRepository;
     }
 
-    public List<Server> listAll() {
-        return serverRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public List<ServerResponse> listServers() {
+        return serverRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(ServerResponse::from)
+                .toList();
     }
 
-    public Optional<Server> findById(Integer id) {
-        return serverRepository.findById(id);
+    /**
+     * 确认服务器套餐存在性，如果存在就返回套餐
+     *
+     * @param id 套餐id
+     * @return 服务器套餐
+     */
+    private Server getServer(Integer id) {
+        return serverRepository.findById(id)
+                .orElseThrow(ServerNotFoundException::new);
     }
 
-    public Server create(Server server) {
-        return serverRepository.save(server);
+    public ServerResponse create(ServerRequest request) {
+        return ServerResponse.from(serverRepository.save(request.toServer()));
     }
 
-    public Server update(Server server) {
-        return serverRepository.save(server);
+    public ServerResponse update(Integer id, ServerRequest request) {
+        Server existing = getServer(id);
+
+        if (request.model() != null) existing.setModel(request.model());
+        if (request.cpu() != null) existing.setCpu(request.cpu());
+        if (request.ram() != null) existing.setRam(request.ram());
+        if (request.disk() != null) existing.setDisk(request.disk());
+        if (request.pricePerMonth() != null) existing.setPricePerMonth(request.pricePerMonth());
+        if (request.isAvailable() != null) existing.setIsAvailable(request.isAvailable());
+
+        return ServerResponse.from(serverRepository.save(existing));
     }
 
     public void delete(Integer id) {
+        // 检查套餐是否存在
+        getServer(id);
         serverRepository.deleteById(id);
     }
 }
