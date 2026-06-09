@@ -4,7 +4,6 @@ import club.xiaozhe.cloudservermanager.dto.ApiResponse;
 import club.xiaozhe.cloudservermanager.dto.CreateOrderRequest;
 import club.xiaozhe.cloudservermanager.dto.OrderResponse;
 import club.xiaozhe.cloudservermanager.dto.UpdateStatusRequest;
-import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +15,9 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final UserRepository userRepository;
 
-    public OrderController(OrderService orderService, UserRepository userRepository) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.userRepository = userRepository;
     }
 
     /**
