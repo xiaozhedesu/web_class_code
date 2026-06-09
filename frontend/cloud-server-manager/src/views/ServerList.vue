@@ -52,7 +52,14 @@ const handleSave = async () => {
     }
     try {
         if (isEditing.value && editingServer.value) {
-            (await api.put(`/admin/servers/${editingServer.value.id}`, form.value)) as any;
+            (await api.put(`/admin/servers/${editingServer.value.id}`, {
+                model: form.value.model,
+                cpu: form.value.cpu,
+                ram: form.value.ram,
+                disk: form.value.disk,
+                pricePerMonth: form.value.pricePerMonth,
+                isAvailable: form.value.isAvailable,
+            })) as any;
             ElMessage.success("修改成功");
         } else {
             (await api.post("/admin/servers", form.value)) as any;
