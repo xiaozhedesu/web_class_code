@@ -58,7 +58,7 @@ public class OrderService {
 
     private User getUserById(Integer id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     private Server getServerById(Integer id) {
