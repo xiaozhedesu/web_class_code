@@ -4,6 +4,7 @@ import club.xiaozhe.cloudservermanager.dto.ApiResponse;
 import club.xiaozhe.cloudservermanager.dto.ServerRequest;
 import club.xiaozhe.cloudservermanager.dto.ServerResponse;
 import club.xiaozhe.cloudservermanager.service.ServerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class ServerController {
      * POST /api/admin/servers
      */
     @PostMapping("/admin/servers")
-    public ApiResponse<ServerResponse> createServer(@RequestBody ServerRequest request) {
+    public ApiResponse<ServerResponse> createServer(@RequestBody @Valid ServerRequest request) {
         return ApiResponse.success(serverService.create(request));
     }
 
@@ -41,7 +42,7 @@ public class ServerController {
      * PUT /api/admin/servers/{id}
      */
     @PutMapping("/admin/servers/{id}")
-    public ApiResponse<ServerResponse> updateServer(@PathVariable Integer id, @RequestBody ServerRequest request) {
+    public ApiResponse<ServerResponse> updateServer(@PathVariable Integer id, @RequestBody @Valid ServerRequest request) {
         return ApiResponse.success(serverService.update(id, request));
     }
 
