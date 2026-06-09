@@ -9,9 +9,13 @@ pro）完成原型开发，使用 [apifox](https://apifox.com/?utm_source=bing&u
 ## 技术栈
 
 前端：Vue3 + TypeScript + Vite + Element Plus + Vue Router + Axios
+
 后端：java17 + Spring Boot 4.0.6 + Spring Security + JPA + JWT (jjwt)
+
 数据库：PostgreSQL 16
+
 接口测试: Apifox
+
 服务部署: docker compose
 
 ## 开发环境运行
