@@ -1,5 +1,6 @@
 package club.xiaozhe.cloudservermanager.config;
 
+import club.xiaozhe.cloudservermanager.dto.ApiResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.filter.JwtAuthenticationFilter;
 import club.xiaozhe.cloudservermanager.service.CustomUserDetailsService;
@@ -56,13 +57,13 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write(mapper.writeValueAsString(Map.of("message", "请先登录")));
+                            response.getWriter().write(mapper.writeValueAsString(ApiResponse.error(401, "请先登录")));
                         })
                         // 自定义 403 权限不足响应
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write(mapper.writeValueAsString(Map.of("message", "权限不足")));
+                            response.getWriter().write(mapper.writeValueAsString(ApiResponse.error(403, "权限不足")));
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
