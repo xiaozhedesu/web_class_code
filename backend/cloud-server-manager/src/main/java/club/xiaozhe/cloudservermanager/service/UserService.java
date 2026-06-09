@@ -1,15 +1,16 @@
 package club.xiaozhe.cloudservermanager.service;
 
 import club.xiaozhe.cloudservermanager.dto.UpdateUserRequest;
+import club.xiaozhe.cloudservermanager.dto.UserPageResponse;
+import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.entity.User;
+import club.xiaozhe.cloudservermanager.exception.UserNotFoundException;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,46 +24,42 @@ public class UserService {
     /**
      * 分页查询用户，支持姓名模糊搜索
      */
-    public Page<User> listUsers(int page, int size, String keyword) {
+    public UserPageResponse listUsers(int page, int size, String keyword) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
-        if (keyword == null || keyword.isEmpty()) {
-            return userRepository.findAll(pageRequest);
-        }
-        return userRepository.findByRealNameContaining(keyword, pageRequest);
-    }
 
-    /**
-     * 根据 ID 查找用户
-     */
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
+        Page<User> userPage;
+        if (keyword == null || keyword.isEmpty()) {
+            userPage = userRepository.findAll(pageRequest);
+        } else {
+            userPage = userRepository.findByRealNameContaining(keyword, pageRequest);
+        }
+
+        return UserPageResponse.from(userPage);
     }
 
     /**
      * 更新用户信息（只更新 realName 和 phone）
      */
     @Transactional
-    public void updateUser(User user, UpdateUserRequest request) {
+    public UserResponse updateUser(Integer id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+
         if (request.realName() != null) {
             user.setRealName(request.realName());
         }
         if (request.phone() != null) {
             user.setPhone(request.phone());
         }
-        userRepository.save(user);
+
+        return UserResponse.from(userRepository.save(user));
     }
 
     /**
      * 删除用户
      */
     public void deleteUser(Integer id) {
+        if (!userRepository.existsById(id)) throw new UserNotFoundException();
         userRepository.deleteById(id);
-    }
-
-    /**
-     * 判断用户是否存在
-     */
-    public boolean existsById(Integer id) {
-        return userRepository.existsById(id);
     }
 }
