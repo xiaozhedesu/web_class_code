@@ -14,7 +14,7 @@ public record OrderResponse(
         Integer serverId,
         Integer months,
         BigDecimal totalPrice,
-        String status,
+        Order.Status status,
         LocalDateTime orderTime
 ) {
     public static OrderResponse from(Order order) {

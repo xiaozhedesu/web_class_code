@@ -84,7 +84,7 @@ public class OrderService {
         order.setServerId(serverId);
         order.setMonths(months);
         order.setTotalPrice(totalPrice);
-        order.setStatus(Order.PENDING);
+        order.setStatus(Order.Status.PENDING);
 
         return OrderResponse.from(orderRepository.save(order), user);
     }
@@ -121,7 +121,7 @@ public class OrderService {
      * 管理员修改指定订单状态
      */
     @Transactional
-    public OrderResponse updateStatusAsAdmin(Integer id, String status) {
+    public OrderResponse updateStatusAsAdmin(Integer id, Order.Status status) {
         Order order = getOrderById(id);
         order.setStatus(status);
 
@@ -137,10 +137,10 @@ public class OrderService {
      * @return OrderResponse
      */
     @Transactional
-    public OrderResponse updateStatusAsUser(Integer id, String status) {
+    public OrderResponse updateStatusAsUser(Integer id, Order.Status status) {
         // 限制修改状态
         // 这个函数本来就别扭，生产代码不会有这种走向来的吧，但是我没有写状态机逻辑
-        Set<String> allowed = Set.of(Order.CANCELLED, Order.PAID);
+        Set<Order.Status> allowed = Set.of(Order.Status.CANCELLED, Order.Status.PAID);
         if (!allowed.contains(status)) {
             throw new BusinessException(ErrorCode.STATUS_UNDEFINED, "用户只允许修改为PAID|CANCELLED");
         }

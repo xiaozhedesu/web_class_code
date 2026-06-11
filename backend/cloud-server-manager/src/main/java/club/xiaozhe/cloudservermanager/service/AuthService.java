@@ -64,7 +64,7 @@ public class AuthService {
         user.setPassword(request.password());
         user.setRealName(request.realName());
         user.setPhone(request.phone());
-        user.setRole(User.USER);
+        user.setRole(User.Role.USER);
 
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new BusinessException(ErrorCode.INVALID_VALUE, String.format("用户名 %s 已存在", user.getUsername()));

@@ -10,20 +10,23 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_user")
 public class User {
-
-    public static final String ADMIN = "ADMIN";
-    public static final String USER = "USER";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String username;
     private String password;
     private String realName;
     private String phone;
-    private String role;
-
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)
     private LocalDateTime createTime;
+
+    /**
+     * 用户存在两种身份，使用枚举表示
+     */
+    public enum Role {
+        ADMIN, USER
+    }
 }

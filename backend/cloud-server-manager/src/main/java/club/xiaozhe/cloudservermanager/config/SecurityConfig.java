@@ -18,8 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -69,7 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servers").authenticated()
-                        .requestMatchers("/api/admin/**").hasRole(User.ADMIN)
+                        .requestMatchers("/api/admin/**").hasRole(User.Role.ADMIN.name())
                         .requestMatchers("/api/user/**").authenticated()
                         .anyRequest().authenticated()
                 )

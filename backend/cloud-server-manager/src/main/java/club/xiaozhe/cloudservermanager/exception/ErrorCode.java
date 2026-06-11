@@ -1,5 +1,6 @@
 package club.xiaozhe.cloudservermanager.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
  * 使用错误码枚举统一管理所有业务错误信息
  */
 @Getter
+@AllArgsConstructor
 public enum ErrorCode {
     /* ----- NOT FOUND ----- */
     USER_NOT_FOUND(1001, "用户不存在！", HttpStatus.NOT_FOUND),
@@ -26,10 +28,4 @@ public enum ErrorCode {
     private final int code;
     private final String message;
     private final HttpStatus status;
-
-    ErrorCode(int code, String message, HttpStatus status) {
-        this.code = code;
-        this.message = message;
-        this.status = status;
-    }
 }

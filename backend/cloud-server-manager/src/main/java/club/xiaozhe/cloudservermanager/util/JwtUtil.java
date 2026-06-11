@@ -1,5 +1,6 @@
 package club.xiaozhe.cloudservermanager.util;
 
+import club.xiaozhe.cloudservermanager.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +26,9 @@ public class JwtUtil {
      * @param role     角色
      * @return token
      */
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, User.Role role) {
         Map<String, Object> claims = Map.of(
-                "role", role
+                "role", role.name()
         );
 
         return Jwts.builder()
@@ -56,8 +57,9 @@ public class JwtUtil {
      * @param token token
      * @return role
      */
-    public String getRoleFromToken(String token) {
-        return getClaimFromToken(token, claims -> (String) claims.get("role"));
+    public User.Role getRoleFromToken(String token) {
+        String roleStr = getClaimFromToken(token, claims -> (String) claims.get("role"));
+        return User.Role.valueOf(roleStr);
     }
 
     /**

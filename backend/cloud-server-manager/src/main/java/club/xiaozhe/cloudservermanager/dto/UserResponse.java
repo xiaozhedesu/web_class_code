@@ -12,7 +12,7 @@ public record UserResponse(
         String username,
         String realName,
         String phone,
-        String role,
+        User.Role role,
         LocalDateTime createTime
 ) {
     public static UserResponse from(User user) {
