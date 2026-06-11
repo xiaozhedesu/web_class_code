@@ -17,6 +17,22 @@ services:
       timeout: 5s
       retries: 5
 
+  # Redis服务
+  redis:
+    image: redis:7.4-alpine
+    container_name: csm-redis
+    volumes:
+      - redisdata:/data
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    command: ['redis-server','--appendonly', 'yes']
+    healthcheck:
+      test: [ 'CMD', 'redis-cli', 'ping' ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   # 后端服务
   backend:
     build: ./backend/cloud-server-manager
@@ -24,12 +40,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       DB_HOST: postgres
       DB_PORT: "5432"
       DB_NAME: cloud_server
       DB_USERNAME: root
       DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
 
   # 前端服务
   frontend:
@@ -39,7 +59,8 @@ services:
       - backend
     ports:
       - target: 80
-        published: 80
+        published: 81
 
 volumes:
   pgdata:
+  redisdata:
