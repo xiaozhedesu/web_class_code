@@ -4,7 +4,6 @@ import club.xiaozhe.cloudservermanager.dto.*;
 import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
-import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     /**
-     * JPA提供数据库操作服务
+     * 使用用户相关的数据库能力
      */
-    private final UserRepository userRepository;
+    private final UserService userService;
     /**
      * 给密码加密
      */
@@ -29,12 +28,13 @@ public class AuthService {
      */
     private final SecurityUtil securityUtil;
 
-    public AuthService(UserRepository userRepository
-            , PasswordEncoder passwordEncoder
-            , JwtUtil jwtUtil
-            , SecurityUtil securityUtil
+    public AuthService(
+            UserService userService,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            SecurityUtil securityUtil
     ) {
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.securityUtil = securityUtil;
@@ -47,7 +47,7 @@ public class AuthService {
      * @return 登录返回体（token、username、role）
      */
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.username()).orElse(null);
+        User user = userService.findUserByUsername(request.username());
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BusinessException(ErrorCode.USERNAME_OR_PASSWORD_ERROR);
         }
@@ -72,14 +72,14 @@ public class AuthService {
         user.setPhone(request.phone());
         user.setRole(User.Role.USER);
 
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        if (userService.isUserExists(request.username())) {
             throw new BusinessException(ErrorCode.INVALID_VALUE, String.format("用户名 %s 已存在", user.getUsername()));
         }
 
         // 进行密码加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // 返回到前端的数据不能含密码
-        return UserResponse.from(userRepository.save(user));
+        return UserResponse.from(userService.save(user));
     }
 
     /**
@@ -107,6 +107,6 @@ public class AuthService {
         if (request.phone() != null) user.setPhone(request.phone());
 
         // 保存
-        return UserResponse.from(userRepository.save(user));
+        return UserResponse.from(userService.save(user));
     }
 }

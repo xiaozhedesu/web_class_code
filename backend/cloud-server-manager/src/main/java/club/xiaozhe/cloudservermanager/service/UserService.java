@@ -47,6 +47,36 @@ public class UserService {
     }
 
     /**
+     * 根据username获取用户实体对象
+     *
+     * @param username 用户名
+     * @return 用户实体对象
+     */
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    /**
+     * 判断是否存在名为username的用户
+     *
+     * @param username 用户名
+     * @return 存在返回true
+     */
+    public boolean isUserExists(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    /**
+     * 保存用户，并返回保存后的用户实体对象
+     * @param user User对象
+     * @return 用户实体对象
+     */
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    /**
      * 分页查询用户，支持姓名模糊搜索
      */
     public UserPageResponse listUsers(int page, int size, String keyword) {
