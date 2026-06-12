@@ -20,6 +20,16 @@ public class ServerService {
         this.serverRepository = serverRepository;
     }
 
+    /**
+     * 根据id获取服务器套餐信息
+     * @param id 服务器套餐id
+     * @return 服务器套餐实例对象
+     */
+    public Server findServerById(Integer id) {
+        return serverRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
+    }
+
     public List<ServerResponse> listServers() {
         return serverRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()

@@ -2,11 +2,11 @@ package club.xiaozhe.cloudservermanager.service;
 
 import club.xiaozhe.cloudservermanager.dto.*;
 import club.xiaozhe.cloudservermanager.entity.User;
-import club.xiaozhe.cloudservermanager.exception.*;
+import club.xiaozhe.cloudservermanager.exception.BusinessException;
+import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import club.xiaozhe.cloudservermanager.util.SecurityUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +24,20 @@ public class AuthService {
      * 生成token
      */
     private final JwtUtil jwtUtil;
+    /**
+     * 获取用户信息
+     */
+    private final SecurityUtil securityUtil;
 
     public AuthService(UserRepository userRepository
             , PasswordEncoder passwordEncoder
             , JwtUtil jwtUtil
+            , SecurityUtil securityUtil
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.securityUtil = securityUtil;
     }
 
     /**
@@ -83,7 +89,7 @@ public class AuthService {
      */
     public UserResponse currentUser() {
         // 返回到前端的数据不能含密码
-        return UserResponse.from(getUserInfo());
+        return UserResponse.from(securityUtil.getCurrentUser());
     }
 
     /**
@@ -94,7 +100,7 @@ public class AuthService {
      */
     public UserResponse updateProfile(UpdateUserRequest request) {
         // 获取
-        User user = getUserInfo();
+        User user = securityUtil.getCurrentUser();
 
         // 修改
         if (request.realName() != null) user.setRealName(request.realName());
@@ -102,18 +108,5 @@ public class AuthService {
 
         // 保存
         return UserResponse.from(userRepository.save(user));
-    }
-
-    /**
-     * 获取用户信息
-     *
-     * @return 用户信息
-     */
-    private User getUserInfo() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null)
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "未获取到登录信息");
-        return userRepository.findByUsername(auth.getName())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 }

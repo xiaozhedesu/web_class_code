@@ -8,10 +8,7 @@ import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.OrderRepository;
-import club.xiaozhe.cloudservermanager.repository.ServerRepository;
-import club.xiaozhe.cloudservermanager.repository.UserRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import club.xiaozhe.cloudservermanager.util.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,45 +22,26 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final UserRepository userRepository;
     private final OrderRepository orderRepository;
-    private final ServerRepository serverRepository;
+    private final UserService userService;
+    private final ServerService serverService;
+    private final SecurityUtil securityUtil;
 
-    public OrderService(UserRepository userRepository, OrderRepository orderRepository, ServerRepository serverRepository) {
-        this.userRepository = userRepository;
+    public OrderService(
+            OrderRepository orderRepository,
+            UserService userService,
+            ServerService serverService,
+            SecurityUtil securityUtil
+    ) {
         this.orderRepository = orderRepository;
-        this.serverRepository = serverRepository;
-    }
-
-    /**
-     * 获取当前用户对象，如果为空则抛出异常。
-     *
-     * @return User
-     */
-    private User currentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null)
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "未获取到登录信息");
-        String username = auth.getName();
-        if (username == null)
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
-        return userRepository.findByUsername(auth.getName())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        this.userService = userService;
+        this.serverService = serverService;
+        this.securityUtil = securityUtil;
     }
 
     private Order getOrderById(Integer id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-    }
-
-    private User getUserById(Integer id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private Server getServerById(Integer id) {
-        return serverRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
     }
 
     /**
@@ -74,11 +52,11 @@ public class OrderService {
         Integer serverId = request.serverId();
         Integer months = request.months();
 
-        Server server = getServerById(serverId);
+        Server server = serverService.findServerById(serverId);
 
         BigDecimal totalPrice = server.getPricePerMonth().multiply(BigDecimal.valueOf(months));
 
-        User user = currentUser();
+        User user = securityUtil.getCurrentUser();
         Order order = new Order();
         order.setUserId(user.getId());
         order.setServerId(serverId);
@@ -93,7 +71,7 @@ public class OrderService {
      * 查询用户的订单列表
      */
     public List<OrderResponse> listMyOrders() {
-        User user = currentUser();
+        User user = securityUtil.getCurrentUser();
         List<Order> orders = orderRepository.findByUserId(user.getId());
         return orders.stream()
                 .map(order -> OrderResponse.from(order, user))
@@ -109,7 +87,7 @@ public class OrderService {
         Set<Integer> userIds = orders.stream()
                 .map(Order::getUserId)
                 .collect(Collectors.toSet());
-        Map<Integer, User> userMap = userRepository.findAllById(userIds).stream()
+        Map<Integer, User> userMap = userService.findUserListById(userIds).stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
 
         return orders.stream()
@@ -125,7 +103,7 @@ public class OrderService {
         Order order = getOrderById(id);
         order.setStatus(status);
 
-        User user = getUserById(order.getUserId());
+        User user = userService.findUserById(order.getUserId());
         return OrderResponse.from(orderRepository.save(order), user);
     }
 
@@ -148,7 +126,7 @@ public class OrderService {
         Order order = getOrderById(id);
         order.setStatus(status);
 
-        User user = currentUser();
+        User user = securityUtil.getCurrentUser();
         if (!order.getUserId().equals(user.getId())) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "无权查看该订单");
         }
@@ -163,7 +141,7 @@ public class OrderService {
      * @return OrderResponse
      */
     public OrderResponse getMyOrder(Integer id) {
-        User user = currentUser();
+        User user = securityUtil.getCurrentUser();
 
         Order order = getOrderById(id);
         if (!order.getUserId().equals(user.getId())) {

@@ -13,6 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserService {
 
@@ -20,6 +23,27 @@ public class UserService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    /**
+     * 根据id获取用户信息
+     *
+     * @param id 用户id
+     * @return 用户实体对象
+     */
+    public User findUserById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    /**
+     * 根据id集合获取用户信息
+     *
+     * @param ids 用户id的集合
+     * @return 用户列表
+     */
+    public List<User> findUserListById(Set<Integer> ids) {
+        return userRepository.findAllById(ids);
     }
 
     /**
@@ -43,8 +67,7 @@ public class UserService {
      */
     @Transactional
     public UserResponse updateUser(Integer id, UpdateUserRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = findUserById(id);
 
         if (request.realName() != null) {
             user.setRealName(request.realName());
