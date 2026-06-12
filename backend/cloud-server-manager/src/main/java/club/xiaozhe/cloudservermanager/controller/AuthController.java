@@ -17,7 +17,8 @@ public class AuthController {
 
     /**
      * 用户登录
-     * POST /api/auth/login
+     *
+     * @apiNote POST /api/auth/login
      */
     @PostMapping("/auth/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -26,7 +27,8 @@ public class AuthController {
 
     /**
      * 用户注册
-     * POST /api/auth/register
+     *
+      @apiNote POST /api/auth/register
      */
     @PostMapping("/auth/register")
     public ApiResponse<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -35,7 +37,8 @@ public class AuthController {
 
     /**
      * 获取当前登录用户信息
-     * GET /api/user/me
+     *
+      @apiNote GET /api/user/me
      */
     @GetMapping("/user/me")
     public ApiResponse<UserResponse> currentUser() {
@@ -44,7 +47,8 @@ public class AuthController {
 
     /**
      * 修改当前用户信息
-     * PUT /api/user/me
+     *
+     * @apiNote PUT /api/user/me
      */
     @PutMapping("/user/me")
     public ApiResponse<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {

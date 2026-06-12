@@ -21,7 +21,8 @@ public class ServerController {
 
     /**
      * 查询所有服务器套餐（所有登录用户可用）
-     * GET /api/servers
+     *
+     * @apiNote GET /api/servers
      */
     @GetMapping("/servers")
     public ApiResponse<List<ServerResponse>> listServers() {
@@ -30,29 +31,32 @@ public class ServerController {
 
     /**
      * 新增服务器套餐（管理员）
-     * POST /api/admin/servers
+     *
+     * @apiNote POST /api/admin/servers
      */
     @PostMapping("/admin/servers")
     public ApiResponse<ServerResponse> createServer(@RequestBody @Valid ServerRequest request) {
-        return ApiResponse.success(serverService.create(request));
+        return ApiResponse.success(serverService.createServer(request));
     }
 
     /**
      * 修改服务器套餐（管理员）
-     * PUT /api/admin/servers/{id}
+     *
+     * @apiNote PUT /api/admin/servers/{id}
      */
     @PutMapping("/admin/servers/{id}")
     public ApiResponse<ServerResponse> updateServer(@PathVariable Integer id, @RequestBody @Valid ServerRequest request) {
-        return ApiResponse.success(serverService.update(id, request));
+        return ApiResponse.success(serverService.updateServer(id, request));
     }
 
     /**
      * 删除服务器套餐（管理员）
-     * DELETE /api/admin/servers/{id}
+     *
+     * @apiNote DELETE /api/admin/servers/{id}
      */
     @DeleteMapping("/admin/servers/{id}")
     public ApiResponse<Void> deleteServer(@PathVariable Integer id) {
-        serverService.delete(id);
+        serverService.deleteServer(id);
         return ApiResponse.success(null);
     }
 }

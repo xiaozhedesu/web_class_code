@@ -21,7 +21,8 @@ public class UserController {
 
     /**
      * 分页查询用户，支持姓名模糊搜索
-     * GET /api/admin/users?page=0&size=10&keyword=张三
+     *
+     * @apiNote GET /api/admin/users?page=0&size=10&keyword=张三
      */
     @GetMapping("/users")
     public ApiResponse<UserPageResponse> listUsers(
@@ -33,7 +34,8 @@ public class UserController {
 
     /**
      * 修改用户信息（真实姓名、电话）
-     * PUT /api/admin/users/{id}
+     *
+     * @apiNote PUT /api/admin/users/{id}
      */
     @PutMapping("/users/{id}")
     public ApiResponse<UserResponse> updateUser(
@@ -44,7 +46,8 @@ public class UserController {
 
     /**
      * 删除用户
-     * DELETE /api/admin/users/{id}
+     *
+     * @apiNote DELETE /api/admin/users/{id}
      */
     @DeleteMapping("/users/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable Integer id) {

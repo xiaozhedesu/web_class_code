@@ -39,13 +39,23 @@ public class OrderService {
         this.securityUtil = securityUtil;
     }
 
-    private Order getOrderById(Integer id) {
+    /* ----- tools ----- */
+
+    /**
+     * 根据id获取订单信息
+     *
+     * @param id 订单id
+     * @return 订单实体对象
+     */
+    Order getOrderById(Integer id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 
+    /* ----- apis ----- */
+
     /**
-     * 用户创建租赁订单，自动计算总价
+     * 用户创建租赁订单
      */
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
@@ -68,7 +78,7 @@ public class OrderService {
     }
 
     /**
-     * 查询用户的订单列表
+     * 用户查看自己的订单
      */
     public List<OrderResponse> listMyOrders() {
         User user = securityUtil.getCurrentUser();
@@ -79,7 +89,7 @@ public class OrderService {
     }
 
     /**
-     * 查询所有订单（管理员）
+     * 管理员查看所有订单
      */
     public List<OrderResponse> listAllOrders() {
         List<Order> orders = orderRepository.findAll();
@@ -96,10 +106,10 @@ public class OrderService {
     }
 
     /**
-     * 管理员修改指定订单状态
+     * 管理员修改订单状态
      */
     @Transactional
-    public OrderResponse updateStatusAsAdmin(Integer id, Order.Status status) {
+    public OrderResponse updateOrderStatus(Integer id, Order.Status status) {
         Order order = getOrderById(id);
         order.setStatus(status);
 
@@ -108,14 +118,10 @@ public class OrderService {
     }
 
     /**
-     * 用户修改指定订单状态
-     *
-     * @param id     订单id
-     * @param status 状态码
-     * @return OrderResponse
+     * 用户修改自己订单状态（只能取消或支付）
      */
     @Transactional
-    public OrderResponse updateStatusAsUser(Integer id, Order.Status status) {
+    public OrderResponse updateMyOrderStatus(Integer id, Order.Status status) {
         // 限制修改状态
         // 这个函数本来就别扭，生产代码不会有这种走向来的吧，但是我没有写状态机逻辑
         Set<Order.Status> allowed = Set.of(Order.Status.CANCELLED, Order.Status.PAID);
@@ -137,8 +143,7 @@ public class OrderService {
     /**
      * 用户查看单个订单
      *
-     * @param id 订单号
-     * @return OrderResponse
+     * @apiNote GET /api/user/orders/{id}
      */
     public OrderResponse getMyOrder(Integer id) {
         User user = securityUtil.getCurrentUser();

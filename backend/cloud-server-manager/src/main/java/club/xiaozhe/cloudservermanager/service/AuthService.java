@@ -40,11 +40,10 @@ public class AuthService {
         this.securityUtil = securityUtil;
     }
 
+    /* ----- apis ----- */
+
     /**
-     * 进行登录操作
-     *
-     * @param request 登录请求体
-     * @return 登录返回体（token、username、role）
+     * 用户登录
      */
     public LoginResponse login(LoginRequest request) {
         User user = userService.findUserByUsername(request.username());
@@ -58,10 +57,7 @@ public class AuthService {
     }
 
     /**
-     * 进行注册操作
-     *
-     * @param request 注册请求体
-     * @return 用户返回体
+     * 用户注册
      */
     public UserResponse register(RegisterRequest request) {
         // 组装User
@@ -83,9 +79,7 @@ public class AuthService {
     }
 
     /**
-     * 获取当前用户信息
-     *
-     * @return 用户返回体
+     * 获取当前登录用户信息
      */
     public UserResponse currentUser() {
         // 返回到前端的数据不能含密码
@@ -93,10 +87,7 @@ public class AuthService {
     }
 
     /**
-     * 修改用户信息
-     *
-     * @param request 修改请求体
-     * @return 用户返回体
+     * 修改当前用户信息
      */
     public UserResponse updateProfile(UpdateUserRequest request) {
         // 获取

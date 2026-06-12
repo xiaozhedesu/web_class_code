@@ -22,7 +22,8 @@ public class OrderController {
 
     /**
      * 用户创建租赁订单
-     * POST /api/user/orders
+     *
+     * @apiNote POST /api/user/orders
      */
     @PostMapping("/user/orders")
     public ApiResponse<OrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
@@ -31,7 +32,8 @@ public class OrderController {
 
     /**
      * 用户查看自己的订单
-     * GET /api/user/orders
+     *
+     * @apiNote GET /api/user/orders
      */
     @GetMapping("/user/orders")
     public ApiResponse<List<OrderResponse>> listMyOrders() {
@@ -40,7 +42,8 @@ public class OrderController {
 
     /**
      * 管理员查看所有订单
-     * GET /api/admin/orders
+     *
+     * @apiNote GET /api/admin/orders
      */
     @GetMapping("/admin/orders")
     public ApiResponse<List<OrderResponse>> listAllOrders() {
@@ -49,19 +52,21 @@ public class OrderController {
 
     /**
      * 管理员修改订单状态
-     * PUT /api/admin/orders/{id}/status
+     *
+     * @apiNote PUT /api/admin/orders/{id}/status
      */
     @PutMapping("/admin/orders/{id}/status")
     public ApiResponse<OrderResponse> updateOrderStatus(
             @PathVariable Integer id,
             @RequestBody @Valid UpdateStatusRequest request
     ) {
-        return ApiResponse.success(orderService.updateStatusAsAdmin(id, request.status()));
+        return ApiResponse.success(orderService.updateOrderStatus(id, request.status()));
     }
 
     /**
      * 用户查看单个订单
-     * GET /api/user/orders/{id}
+     *
+     * @apiNote GET /api/user/orders/{id}
      */
     @GetMapping("/user/orders/{id}")
     public ApiResponse<OrderResponse> getMyOrder(@PathVariable Integer id) {
@@ -70,12 +75,13 @@ public class OrderController {
 
     /**
      * 用户修改自己订单状态（只能取消或支付）
-     * PUT /api/user/orders/{id}/status
+     *
+     * @apiNote PUT /api/user/orders/{id}/status
      */
     @PutMapping("/user/orders/{id}/status")
     public ApiResponse<OrderResponse> updateMyOrderStatus(
             @PathVariable Integer id,
             @RequestBody @Valid UpdateStatusRequest request) {
-        return ApiResponse.success(orderService.updateStatusAsUser(id, request.status()));
+        return ApiResponse.success(orderService.updateMyOrderStatus(id, request.status()));
     }
 }

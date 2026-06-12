@@ -25,13 +25,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /* ----- tools ----- */
+
     /**
      * 根据id获取用户信息
      *
      * @param id 用户id
      * @return 用户实体对象
      */
-    public User findUserById(Integer id) {
+    User findUserById(Integer id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
@@ -42,7 +44,7 @@ public class UserService {
      * @param ids 用户id的集合
      * @return 用户列表
      */
-    public List<User> findUserListById(Set<Integer> ids) {
+    List<User> findUserListById(Set<Integer> ids) {
         return userRepository.findAllById(ids);
     }
 
@@ -52,7 +54,7 @@ public class UserService {
      * @param username 用户名
      * @return 用户实体对象
      */
-    public User findUserByUsername(String username) {
+    User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
@@ -63,18 +65,21 @@ public class UserService {
      * @param username 用户名
      * @return 存在返回true
      */
-    public boolean isUserExists(String username) {
+    boolean isUserExists(String username) {
         return userRepository.existsByUsername(username);
     }
 
     /**
      * 保存用户，并返回保存后的用户实体对象
+     *
      * @param user User对象
      * @return 用户实体对象
      */
-    public User save(User user) {
+    User save(User user) {
         return userRepository.save(user);
     }
+
+    /* ----- apis ----- */
 
     /**
      * 分页查询用户，支持姓名模糊搜索
@@ -93,7 +98,7 @@ public class UserService {
     }
 
     /**
-     * 更新用户信息（只更新 realName 和 phone）
+     * 修改用户信息（真实姓名、电话）
      */
     @Transactional
     public UserResponse updateUser(Integer id, UpdateUserRequest request) {

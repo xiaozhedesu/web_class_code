@@ -20,16 +20,24 @@ public class ServerService {
         this.serverRepository = serverRepository;
     }
 
+    /* ----- tools ----- */
+
     /**
      * 根据id获取服务器套餐信息
+     *
      * @param id 服务器套餐id
      * @return 服务器套餐实例对象
      */
-    public Server findServerById(Integer id) {
+    Server findServerById(Integer id) {
         return serverRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
     }
 
+    /* ----- apis ----- */
+
+    /**
+     * 查询所有服务器套餐（所有登录用户可用）
+     */
     public List<ServerResponse> listServers() {
         return serverRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()
@@ -38,22 +46,17 @@ public class ServerService {
     }
 
     /**
-     * 确认服务器套餐存在性，如果存在就返回套餐
-     *
-     * @param id 套餐id
-     * @return 服务器套餐
+     * 新增服务器套餐（管理员）
      */
-    private Server getServer(Integer id) {
-        return serverRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.SERVER_NOT_FOUND));
-    }
-
-    public ServerResponse create(ServerRequest request) {
+    public ServerResponse createServer(ServerRequest request) {
         return ServerResponse.from(serverRepository.save(request.toServer()));
     }
 
-    public ServerResponse update(Integer id, ServerRequest request) {
-        Server existing = getServer(id);
+    /**
+     * 修改服务器套餐（管理员）
+     */
+    public ServerResponse updateServer(Integer id, ServerRequest request) {
+        Server existing = findServerById(id);
 
         if (request.model() != null) existing.setModel(request.model());
         if (request.cpu() != null) existing.setCpu(request.cpu());
@@ -65,9 +68,12 @@ public class ServerService {
         return ServerResponse.from(serverRepository.save(existing));
     }
 
-    public void delete(Integer id) {
+    /**
+     * 删除服务器套餐（管理员）
+     */
+    public void deleteServer(Integer id) {
         // 检查套餐是否存在
-        getServer(id);
+        findServerById(id);
         serverRepository.deleteById(id);
     }
 }
