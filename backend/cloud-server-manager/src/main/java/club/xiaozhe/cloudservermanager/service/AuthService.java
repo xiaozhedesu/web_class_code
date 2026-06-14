@@ -6,6 +6,10 @@ import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +31,23 @@ public class AuthService {
      * 获取用户信息
      */
     private final SecurityUtil securityUtil;
+    /**
+     * 登录用
+     */
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(
             UserService userService,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
-            SecurityUtil securityUtil
+            SecurityUtil securityUtil,
+            AuthenticationManager authenticationManager
     ) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.securityUtil = securityUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     /* ----- apis ----- */
@@ -46,14 +56,14 @@ public class AuthService {
      * 用户登录
      */
     public LoginResponse login(LoginRequest request) {
-        User user = userService.findUserByUsername(request.username());
-        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new BusinessException(ErrorCode.USERNAME_OR_PASSWORD_ERROR);
-        }
+        Authentication authToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
+        Authentication authenticated = authenticationManager.authenticate(authToken);
 
-        // 生成token
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new LoginResponse(token, user.getUsername(), user.getRole());
+        String name = authenticated.getName();
+        User.Role role = User.Role.valueOf(authenticated.getAuthorities().stream()
+                .findFirst().map(GrantedAuthority::getAuthority).orElse("USER"));
+        String token = jwtUtil.generateToken(name, role);
+        return new LoginResponse(token, name, role);
     }
 
     /**
