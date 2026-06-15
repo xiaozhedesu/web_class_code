@@ -1,8 +1,6 @@
-package club.xiaozhe.cloudservermanager.config;
+package club.xiaozhe.cloudservermanager.exception;
 
 import club.xiaozhe.cloudservermanager.dto.ApiResponse;
-import club.xiaozhe.cloudservermanager.exception.BusinessException;
-import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
