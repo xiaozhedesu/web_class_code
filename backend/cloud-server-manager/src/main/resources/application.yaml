@@ -19,5 +19,6 @@ spring:
       fail-on-unknown-properties: true
 
 jwt:
+  secret: ${JWT_SECRET:maimai_green_orange_pink_murasaki_milk_finale_dx_splash_universe_festival_buddies_prism_circle}
   expiration: ${JWT_EXPIRATION:86400000}
   

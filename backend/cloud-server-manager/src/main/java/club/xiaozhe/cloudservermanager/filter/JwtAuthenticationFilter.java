@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,10 +21,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(
+            JwtUtil jwtUtil,
+            UserDetailsService userDetailsService,
+            StringRedisTemplate stringRedisTemplate) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
@@ -42,8 +48,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
+        String uri = request.getRequestURI();
+
         try {
-            // 先验证 token 是否有效
+            // 获取用户名
+            String username = jwtUtil.getUsernameFromToken(token);
+            if (username == null) {
+                chain.doFilter(request, response);
+                return;
+            }
+            // 从redis里取出token并进行比较
+            String cachedToken = stringRedisTemplate.opsForValue().get("token:" + username);
+            if (cachedToken == null || !cachedToken.equals(token)) {
+                chain.doFilter(request, response);
+                return;
+            }
+            // 验证 token 是否有效
             if (!jwtUtil.validateToken(token)) {
                 // token 无效（过期/签名错误/格式错误等），直接放行不设置认证
                 // SecurityConfig 会因为未认证而返回 401/403
@@ -51,10 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String username = jwtUtil.getUsernameFromToken(token);
-
             SecurityContext ctx = SecurityContextHolder.getContext();
-            if (username != null && ctx.getAuthentication() == null) {
+            if (ctx.getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
