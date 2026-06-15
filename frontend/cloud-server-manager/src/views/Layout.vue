@@ -12,7 +12,7 @@ const username = ref("");
 
 onMounted(async () => {
     try {
-        const res = await api.get("/user/me") as any;
+        const res = (await api.get("/user/me")) as any;
         username.value = res.username;
     } catch {
         username.value = "unknown";
@@ -22,6 +22,7 @@ onMounted(async () => {
 const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    api.post("/user/logout");
     router.push("/login");
 };
 
