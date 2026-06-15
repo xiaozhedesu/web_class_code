@@ -41,12 +41,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 递归查找 UnrecognizedPropertyException
+     * 迭代查找 UnrecognizedPropertyException
      */
     private UnrecognizedPropertyException findUnrecognizedPropertyException(Throwable t) {
         if (t == null) return null;
-        if (t instanceof UnrecognizedPropertyException upe) return upe;
-        return findUnrecognizedPropertyException(t.getCause());
+        Throwable curr = t;
+        while (curr != null) {
+            if (curr instanceof UnrecognizedPropertyException upe) return upe;
+            curr = curr.getCause();
+        }
+        return null;
     }
 
     /**
