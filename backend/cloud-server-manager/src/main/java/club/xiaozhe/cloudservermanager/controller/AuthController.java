@@ -54,4 +54,14 @@ public class AuthController {
     public ApiResponse<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
         return ApiResponse.success(authService.updateProfile(request));
     }
+
+    /**
+     * 用户登出操作
+     * @apiNote POST /api/user/logout
+     */
+    @PostMapping("/user/logout")
+    public ApiResponse<Void> logout() {
+        authService.logout();
+        return ApiResponse.success(null);
+    }
 }

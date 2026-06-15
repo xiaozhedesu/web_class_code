@@ -6,10 +6,12 @@ import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,19 +37,25 @@ public class AuthService {
      * 登录用
      */
     private final AuthenticationManager authenticationManager;
+    /**
+     * 登出清除缓存
+     */
+    private final StringRedisTemplate stringRedisTemplate;
 
     public AuthService(
             UserService userService,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
             SecurityUtil securityUtil,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            StringRedisTemplate stringRedisTemplate
     ) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.securityUtil = securityUtil;
         this.authenticationManager = authenticationManager;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /* ----- apis ----- */
@@ -109,5 +117,18 @@ public class AuthService {
 
         // 保存
         return UserResponse.from(userService.save(user));
+    }
+
+    /**
+     * 登出用户
+     */
+    public void logout() {
+        User user = securityUtil.getCurrentUser();
+        if (user == null) return;
+        String username = user.getUsername();
+        if (username == null) return;
+
+        stringRedisTemplate.delete("token:" + username);
+        SecurityContextHolder.clearContext();
     }
 }
