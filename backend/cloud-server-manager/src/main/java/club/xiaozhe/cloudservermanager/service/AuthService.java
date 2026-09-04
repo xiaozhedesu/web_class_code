@@ -6,6 +6,7 @@ import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +15,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
@@ -41,6 +44,8 @@ public class AuthService {
      * 登出清除缓存
      */
     private final StringRedisTemplate stringRedisTemplate;
+    @Value("${jwt.expiration}")
+    private Long expiration;
 
     public AuthService(
             UserService userService,
@@ -71,6 +76,7 @@ public class AuthService {
         User.Role role = User.Role.valueOf(authenticated.getAuthorities().stream()
                 .findFirst().map(GrantedAuthority::getAuthority).orElse("USER"));
         String token = jwtUtil.generateToken(name, role);
+        stringRedisTemplate.opsForValue().set("token:" + name, token, expiration, TimeUnit.MILLISECONDS);
         return new LoginResponse(token, name, role);
     }
 

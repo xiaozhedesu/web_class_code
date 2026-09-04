@@ -5,26 +5,22 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
     private final SecretKey key;
-    private final StringRedisTemplate stringRedisTemplate;
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, StringRedisTemplate stringRedisTemplate) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -39,17 +35,13 @@ public class JwtUtil {
                 "role", role.name()
         );
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .claims(claims)
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
-
-        stringRedisTemplate.opsForValue().set("token:" + username, token, expiration, TimeUnit.MILLISECONDS);
-        return token;
-
     }
 
     /**
