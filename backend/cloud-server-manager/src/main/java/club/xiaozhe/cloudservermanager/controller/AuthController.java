@@ -3,17 +3,15 @@ package club.xiaozhe.cloudservermanager.controller;
 import club.xiaozhe.cloudservermanager.dto.*;
 import club.xiaozhe.cloudservermanager.service.AuthService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     /**
      * 用户登录

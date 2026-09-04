@@ -6,6 +6,7 @@ import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.util.JwtUtil;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     /**
      * 使用用户相关的数据库能力
@@ -46,22 +48,6 @@ public class AuthService {
     private final StringRedisTemplate stringRedisTemplate;
     @Value("${jwt.expiration}")
     private Long expiration;
-
-    public AuthService(
-            UserService userService,
-            PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil,
-            SecurityUtil securityUtil,
-            AuthenticationManager authenticationManager,
-            StringRedisTemplate stringRedisTemplate
-    ) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.securityUtil = securityUtil;
-        this.authenticationManager = authenticationManager;
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
 
     /* ----- apis ----- */
 

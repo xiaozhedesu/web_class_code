@@ -6,18 +6,16 @@ import club.xiaozhe.cloudservermanager.dto.UserPageResponse;
 import club.xiaozhe.cloudservermanager.dto.UserResponse;
 import club.xiaozhe.cloudservermanager.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/admin")
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     /**
      * 分页查询用户，支持姓名模糊搜索

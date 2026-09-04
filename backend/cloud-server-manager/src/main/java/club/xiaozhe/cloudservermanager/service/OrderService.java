@@ -9,6 +9,7 @@ import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.OrderRepository;
 import club.xiaozhe.cloudservermanager.util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,24 +21,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final ServerService serverService;
     private final SecurityUtil securityUtil;
-
-    public OrderService(
-            OrderRepository orderRepository,
-            UserService userService,
-            ServerService serverService,
-            SecurityUtil securityUtil
-    ) {
-        this.orderRepository = orderRepository;
-        this.userService = userService;
-        this.serverService = serverService;
-        this.securityUtil = securityUtil;
-    }
 
     /* ----- tools ----- */
 

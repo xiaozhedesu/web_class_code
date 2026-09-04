@@ -6,19 +6,17 @@ import club.xiaozhe.cloudservermanager.entity.Server;
 import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.ServerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ServerService {
 
     private final ServerRepository serverRepository;
-
-    public ServerService(ServerRepository serverRepository) {
-        this.serverRepository = serverRepository;
-    }
 
     /* ----- tools ----- */
 

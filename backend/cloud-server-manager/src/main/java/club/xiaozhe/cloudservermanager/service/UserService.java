@@ -7,6 +7,7 @@ import club.xiaozhe.cloudservermanager.entity.User;
 import club.xiaozhe.cloudservermanager.exception.BusinessException;
 import club.xiaozhe.cloudservermanager.exception.ErrorCode;
 import club.xiaozhe.cloudservermanager.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,13 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /* ----- tools ----- */
 

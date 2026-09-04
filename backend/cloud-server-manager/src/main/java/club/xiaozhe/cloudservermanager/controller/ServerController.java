@@ -5,19 +5,17 @@ import club.xiaozhe.cloudservermanager.dto.ServerRequest;
 import club.xiaozhe.cloudservermanager.dto.ServerResponse;
 import club.xiaozhe.cloudservermanager.service.ServerService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class ServerController {
 
     private final ServerService serverService;
-
-    public ServerController(ServerService serverService) {
-        this.serverService = serverService;
-    }
 
     /**
      * 查询所有服务器套餐（所有登录用户可用）

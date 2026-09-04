@@ -6,19 +6,17 @@ import club.xiaozhe.cloudservermanager.dto.OrderResponse;
 import club.xiaozhe.cloudservermanager.dto.UpdateStatusRequest;
 import club.xiaozhe.cloudservermanager.service.OrderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class OrderController {
 
     private final OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     /**
      * 用户创建租赁订单
