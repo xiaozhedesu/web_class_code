@@ -76,13 +76,17 @@ services:
         published: 8080
 
   # 后端服务
-  backend:
-    build: ./shiny-cloud-backend/service
-    container_name: csm-backend
+  service:
+    build: 
+      context: ./shiny-cloud-backend
+      dockerfile: service/Dockerfile
+    container_name: csm-service
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      nacos:
         condition: service_healthy
     environment:
       DB_HOST: postgres
@@ -92,6 +96,11 @@ services:
       DB_PASSWORD: postgres
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      # 记得先去 Nacos 控制台初始化一下密码，然后在这里配置
+      # 如果还是遇到了服务连不上Nacos的情况，就重新启动一下服务
+      NACOS_ADDR: nacos:8848
+      NACOS_USERNAME: nacos
+      NACOS_PASSWORD: nacos
 
   # 前端服务
   frontend:
