@@ -107,7 +107,7 @@ services:
     build: ./shiny-cloud-frontend
     container_name: csm-frontend
     depends_on:
-      - backend
+      - gateway
     ports:
       - target: 80
         published: 80
