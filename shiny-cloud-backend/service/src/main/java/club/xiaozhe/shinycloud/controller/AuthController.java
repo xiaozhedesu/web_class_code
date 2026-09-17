@@ -19,8 +19,8 @@ public class AuthController {
      * @apiNote POST /api/auth/login
      */
     @PostMapping("/auth/login")
-    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ApiResponse.success(authService.login(request));
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return Result.success(authService.login(request));
     }
 
     /**
@@ -29,8 +29,8 @@ public class AuthController {
       @apiNote POST /api/auth/register
      */
     @PostMapping("/auth/register")
-    public ApiResponse<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ApiResponse.success(authService.register(request));
+    public Result<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return Result.success(authService.register(request));
     }
 
     /**
@@ -39,8 +39,8 @@ public class AuthController {
       @apiNote GET /api/user/me
      */
     @GetMapping("/user/me")
-    public ApiResponse<UserResponse> currentUser() {
-        return ApiResponse.success(authService.currentUser());
+    public Result<UserResponse> currentUser() {
+        return Result.success(authService.currentUser());
     }
 
     /**
@@ -49,8 +49,8 @@ public class AuthController {
      * @apiNote PUT /api/user/me
      */
     @PutMapping("/user/me")
-    public ApiResponse<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
-        return ApiResponse.success(authService.updateProfile(request));
+    public Result<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
+        return Result.success(authService.updateProfile(request));
     }
 
     /**
@@ -58,8 +58,8 @@ public class AuthController {
      * @apiNote POST /api/user/logout
      */
     @PostMapping("/user/logout")
-    public ApiResponse<Void> logout() {
+    public Result<Void> logout() {
         authService.logout();
-        return ApiResponse.success(null);
+        return Result.success(null);
     }
 }

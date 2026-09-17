@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.controller;
 
-import club.xiaozhe.shinycloud.dto.ApiResponse;
+import club.xiaozhe.shinycloud.dto.Result;
 import club.xiaozhe.shinycloud.dto.UpdateUserRequest;
 import club.xiaozhe.shinycloud.dto.UserPageResponse;
 import club.xiaozhe.shinycloud.dto.UserResponse;
@@ -23,11 +23,11 @@ public class UserController {
      * @apiNote GET /api/admin/users?page=0&size=10&keyword=张三
      */
     @GetMapping("/users")
-    public ApiResponse<UserPageResponse> listUsers(
+    public Result<UserPageResponse> listUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String keyword) {
-        return ApiResponse.success(userService.listUsers(page, size, keyword));
+        return Result.success(userService.listUsers(page, size, keyword));
     }
 
     /**
@@ -36,10 +36,10 @@ public class UserController {
      * @apiNote PUT /api/admin/users/{id}
      */
     @PutMapping("/users/{id}")
-    public ApiResponse<UserResponse> updateUser(
+    public Result<UserResponse> updateUser(
             @PathVariable Integer id,
             @RequestBody @Valid UpdateUserRequest request) {
-        return ApiResponse.success(userService.updateUser(id, request));
+        return Result.success(userService.updateUser(id, request));
     }
 
     /**
@@ -48,16 +48,16 @@ public class UserController {
      * @apiNote DELETE /api/admin/users/{id}
      */
     @DeleteMapping("/users/{id}")
-    public ApiResponse<Void> deleteUser(@PathVariable Integer id) {
+    public Result<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
-        return ApiResponse.success(null);
+        return Result.success(null);
     }
 
     /**
      * 捕获无 ID 的删除请求，返回友好提示
      */
     @DeleteMapping({"/users", "/users/"})
-    public ResponseEntity<ApiResponse<Void>> deleteUserWithoutId() {
-        return ResponseEntity.badRequest().body(ApiResponse.error(400, "缺少用户 ID"));
+    public ResponseEntity<Result<Void>> deleteUserWithoutId() {
+        return ResponseEntity.badRequest().body(Result.error(400, "缺少用户 ID"));
     }
 }

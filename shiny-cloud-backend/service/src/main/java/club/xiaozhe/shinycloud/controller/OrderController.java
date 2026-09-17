@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.controller;
 
-import club.xiaozhe.shinycloud.dto.ApiResponse;
+import club.xiaozhe.shinycloud.dto.Result;
 import club.xiaozhe.shinycloud.dto.CreateOrderRequest;
 import club.xiaozhe.shinycloud.dto.OrderResponse;
 import club.xiaozhe.shinycloud.dto.UpdateStatusRequest;
@@ -24,8 +24,8 @@ public class OrderController {
      * @apiNote POST /api/user/orders
      */
     @PostMapping("/user/orders")
-    public ApiResponse<OrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
-        return ApiResponse.success(orderService.createOrder(request));
+    public Result<OrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
+        return Result.success(orderService.createOrder(request));
     }
 
     /**
@@ -34,8 +34,8 @@ public class OrderController {
      * @apiNote GET /api/user/orders
      */
     @GetMapping("/user/orders")
-    public ApiResponse<List<OrderResponse>> listMyOrders() {
-        return ApiResponse.success(orderService.listMyOrders());
+    public Result<List<OrderResponse>> listMyOrders() {
+        return Result.success(orderService.listMyOrders());
     }
 
     /**
@@ -44,8 +44,8 @@ public class OrderController {
      * @apiNote GET /api/admin/orders
      */
     @GetMapping("/admin/orders")
-    public ApiResponse<List<OrderResponse>> listAllOrders() {
-        return ApiResponse.success(orderService.listAllOrders());
+    public Result<List<OrderResponse>> listAllOrders() {
+        return Result.success(orderService.listAllOrders());
     }
 
     /**
@@ -54,11 +54,11 @@ public class OrderController {
      * @apiNote PUT /api/admin/orders/{id}/status
      */
     @PutMapping("/admin/orders/{id}/status")
-    public ApiResponse<OrderResponse> updateOrderStatus(
+    public Result<OrderResponse> updateOrderStatus(
             @PathVariable Integer id,
             @RequestBody @Valid UpdateStatusRequest request
     ) {
-        return ApiResponse.success(orderService.updateOrderStatus(id, request.status()));
+        return Result.success(orderService.updateOrderStatus(id, request.status()));
     }
 
     /**
@@ -67,8 +67,8 @@ public class OrderController {
      * @apiNote GET /api/user/orders/{id}
      */
     @GetMapping("/user/orders/{id}")
-    public ApiResponse<OrderResponse> getMyOrder(@PathVariable Integer id) {
-        return ApiResponse.success(orderService.getMyOrder(id));
+    public Result<OrderResponse> getMyOrder(@PathVariable Integer id) {
+        return Result.success(orderService.getMyOrder(id));
     }
 
     /**
@@ -77,9 +77,9 @@ public class OrderController {
      * @apiNote PUT /api/user/orders/{id}/status
      */
     @PutMapping("/user/orders/{id}/status")
-    public ApiResponse<OrderResponse> updateMyOrderStatus(
+    public Result<OrderResponse> updateMyOrderStatus(
             @PathVariable Integer id,
             @RequestBody @Valid UpdateStatusRequest request) {
-        return ApiResponse.success(orderService.updateMyOrderStatus(id, request.status()));
+        return Result.success(orderService.updateMyOrderStatus(id, request.status()));
     }
 }

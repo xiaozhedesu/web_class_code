@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.config;
 
-import club.xiaozhe.shinycloud.dto.ApiResponse;
+import club.xiaozhe.shinycloud.dto.Result;
 import club.xiaozhe.shinycloud.entity.User;
 import club.xiaozhe.shinycloud.filter.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,13 +51,13 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write(mapper.writeValueAsString(ApiResponse.error(401, "请先登录")));
+                            response.getWriter().write(mapper.writeValueAsString(Result.error(401, "请先登录")));
                         })
                         // 自定义 403 权限不足响应
                         .accessDeniedHandler(((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write(mapper.writeValueAsString(ApiResponse.error(403, "权限不足")));
+                            response.getWriter().write(mapper.writeValueAsString(Result.error(403, "权限不足")));
                         }))
                 )
                 .authorizeHttpRequests(auth -> auth

@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.controller;
 
-import club.xiaozhe.shinycloud.dto.ApiResponse;
+import club.xiaozhe.shinycloud.dto.Result;
 import club.xiaozhe.shinycloud.dto.ServerRequest;
 import club.xiaozhe.shinycloud.dto.ServerResponse;
 import club.xiaozhe.shinycloud.service.ServerService;
@@ -23,8 +23,8 @@ public class ServerController {
      * @apiNote GET /api/servers
      */
     @GetMapping("/servers")
-    public ApiResponse<List<ServerResponse>> listServers() {
-        return ApiResponse.success(serverService.listServers());
+    public Result<List<ServerResponse>> listServers() {
+        return Result.success(serverService.listServers());
     }
 
     /**
@@ -33,8 +33,8 @@ public class ServerController {
      * @apiNote POST /api/admin/servers
      */
     @PostMapping("/admin/servers")
-    public ApiResponse<ServerResponse> createServer(@RequestBody @Valid ServerRequest request) {
-        return ApiResponse.success(serverService.createServer(request));
+    public Result<ServerResponse> createServer(@RequestBody @Valid ServerRequest request) {
+        return Result.success(serverService.createServer(request));
     }
 
     /**
@@ -43,8 +43,8 @@ public class ServerController {
      * @apiNote PUT /api/admin/servers/{id}
      */
     @PutMapping("/admin/servers/{id}")
-    public ApiResponse<ServerResponse> updateServer(@PathVariable Integer id, @RequestBody @Valid ServerRequest request) {
-        return ApiResponse.success(serverService.updateServer(id, request));
+    public Result<ServerResponse> updateServer(@PathVariable Integer id, @RequestBody @Valid ServerRequest request) {
+        return Result.success(serverService.updateServer(id, request));
     }
 
     /**
@@ -53,8 +53,8 @@ public class ServerController {
      * @apiNote DELETE /api/admin/servers/{id}
      */
     @DeleteMapping("/admin/servers/{id}")
-    public ApiResponse<Void> deleteServer(@PathVariable Integer id) {
+    public Result<Void> deleteServer(@PathVariable Integer id) {
         serverService.deleteServer(id);
-        return ApiResponse.success(null);
+        return Result.success(null);
     }
 }
