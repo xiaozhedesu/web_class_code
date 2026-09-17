@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
      * 处理业务错误的处理类
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Result<Object>> handleBusinessException(BusinessException e) {
+    public ResponseEntity<Result<Void>> handleBusinessException(BusinessException e) {
         ErrorCode code = e.getCode();
         log.warn("发生业务异常：code = {}, message = {}", e.getCode(), e.getMessage());
         return ResponseEntity.status(code.getStatus())
