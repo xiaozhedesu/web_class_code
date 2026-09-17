@@ -35,7 +35,7 @@ services:
 
   # 后端服务
   backend:
-    build: ./shiny-cloud-backend
+    build: ./shiny-cloud-backend/service
     container_name: csm-backend
     depends_on:
       postgres:
