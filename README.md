@@ -8,15 +8,13 @@ pro）完成原型开发，使用 [apifox](https://apifox.com/?utm_source=bing&u
 
 ## 技术栈
 
-前端：Vue3 + TypeScript + Vite + Element Plus + Vue Router + Axios
-
-后端：java17 + Spring Boot 4.0.6 + Spring Security + JPA + JWT (jjwt)
-
-数据库：PostgreSQL 16
-
-接口测试: Apifox
-
-服务部署: docker compose
+| 模块   | 技术栈 / 工具                                                         |
+|------|------------------------------------------------------------------|
+| 前端   | Vue3 + TypeScript + Vite + Element Plus + Vue Router + Axios     |
+| 后端   | Java 17 + Spring Boot 4.0.6 + Spring Security + JPA + JWT (jjwt) |
+| 数据库  | PostgreSQL 16                                                    |
+| 接口测试 | Apifox                                                           |
+| 服务部署 | Docker Compose                                                   |
 
 ## 开发环境运行
 
@@ -44,12 +42,12 @@ psql -U <username> -d cloud_server -f init.sql
 
 可以通过环境变量配置数据库的各种信息，请保证信息与PostgreSQL配置一致。
 
-| 变量          | 说明        | 默认值         |
-|---------------|-------------|----------------|
+| 变量            | 说明     | 默认值            |
+|---------------|--------|----------------|
 | `DB_HOST`     | 数据库位置  | `localhost`    |
 | `DB_PORT`     | 数据库端口  | `5432`         |
 | `DB_NAME`     | 数据库名字  | `cloud_server` |
-| `DB_USERNAME` | 数据库用户名| `root`         |
+| `DB_USERNAME` | 数据库用户名 | `root`         |
 | `DB_PASSWORD` | 数据库密码  | `postgres`     |
 
 ### 前端
@@ -62,7 +60,8 @@ npm run dev
 
 ## 生产环境部署
 
-本项目已经配置了docker-compose.yaml，只要有支持的容器服务就可以通过指令一键部署。本项目使用的测试环境是Docker Desktop，下列引导会使用docker进行。
+本项目已经配置了docker-compose.yaml，只要有支持的容器服务就可以通过指令一键部署。本项目使用的测试环境是Docker
+Desktop，下列引导会使用docker进行。
 
 ### 确认环境
 
@@ -100,10 +99,10 @@ git clone https://github.com/xiaozhedesu/web_class_code.git && cd ./web_class_co
 
 测试账号：
 
-| 用户名 |  密码  |   角色   |
-|--------|--------|----------|
-| admin  | 123456 |  管理员  |
-| user1  | 123456 | 普通用户 |
+| 用户名   | 密码     | 角色   |
+|-------|--------|------|
+| admin | 123456 | 管理员  |
+| user1 | 123456 | 普通用户 |
 
 ### 停止服务
 
