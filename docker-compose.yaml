@@ -33,6 +33,23 @@ services:
       timeout: 3s
       retries: 5
 
+  nacos:
+    image: nacos/nacos-server:v3.1.1
+    container_name: csm-nacos
+    environment:
+      MODE: standalone
+      # 开启鉴权
+      NACOS_AUTH_ENABLE: "true"
+      # 鉴权相关密钥
+      NACOS_AUTH_TOKEN: -SecretKey012345678901234567890123456789012345678901234567890123456789
+      NACOS_AUTH_IDENTITY_KEY: -serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: -security
+      TIME_ZONE: Asia/Shanghai
+    ports:
+      - "10086:8080"    # Nacos 控制台端口映射
+      - "8848:8848"    # Nacos 服务端口映射
+      - "9848:9848"    # Nacos gRPC 端口映射
+
   # 后端服务
   backend:
     build: ./shiny-cloud-backend/service
