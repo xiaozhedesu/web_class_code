@@ -1,0 +1,19 @@
+Configuration:
+  status: WARN
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{bright,blue} %highlight{%-5level} %style{%pid{}}{magenta} %style{---}{bright,cyan} %style{[%15.15t]}{bright,yellow} %style{%-40.40logger{39}}{green} %style{:}{white} %m%n"
+  Loggers:
+    Logger:
+      - name: club.xiaozhe
+        level: info
+        additivity: false
+        AppenderRef:
+          ref: Console
+    Root:
+      level: info
+      AppenderRef:
+        ref: Console
