@@ -56,6 +56,25 @@ services:
       retries: 20
       start_period: 30s
 
+  # 网关层
+  gateway:
+    build:
+      context: ./shiny-cloud-backend
+      dockerfile: gateway/Dockerfile
+    container_name: csm-gateway
+    depends_on:
+      nacos:
+        condition: service_healthy
+    environment:
+      NACOS_ADDR: nacos:8848
+      # 记得先去 Nacos 控制台初始化一下密码，然后在这里配置
+      # 如果还是遇到了服务连不上Nacos的情况，就重新启动一下服务
+      NACOS_USERNAME: nacos
+      NACOS_PASSWORD: nacos
+    ports:
+      - target: 8080
+        published: 8080
+
   # 后端服务
   backend:
     build: ./shiny-cloud-backend/service
