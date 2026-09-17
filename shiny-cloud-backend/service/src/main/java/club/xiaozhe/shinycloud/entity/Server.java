@@ -1,0 +1,30 @@
+package club.xiaozhe.shinycloud.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "t_server")
+public class Server {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String model;
+    private String cpu;
+    private String ram;
+    private String disk;
+
+    @Column(name = "price_per_month")
+    private BigDecimal pricePerMonth;
+
+    @Column(name = "is_available")
+    private Boolean isAvailable;
+}

@@ -1,0 +1,126 @@
+package club.xiaozhe.shinycloud.service;
+
+import club.xiaozhe.shinycloud.dto.*;
+import club.xiaozhe.shinycloud.entity.User;
+import club.xiaozhe.shinycloud.exception.BusinessException;
+import club.xiaozhe.shinycloud.exception.ErrorCode;
+import club.xiaozhe.shinycloud.util.JwtUtil;
+import club.xiaozhe.shinycloud.util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    /**
+     * 使用用户相关的数据库能力
+     */
+    private final UserService userService;
+    /**
+     * 给密码加密
+     */
+    private final PasswordEncoder passwordEncoder;
+    /**
+     * 生成token
+     */
+    private final JwtUtil jwtUtil;
+    /**
+     * 获取用户信息
+     */
+    private final SecurityUtil securityUtil;
+    /**
+     * 登录用
+     */
+    private final AuthenticationManager authenticationManager;
+    /**
+     * 登出清除缓存
+     */
+    private final StringRedisTemplate stringRedisTemplate;
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
+    /* ----- apis ----- */
+
+    /**
+     * 用户登录
+     */
+    public LoginResponse login(LoginRequest request) {
+        Authentication authToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
+        Authentication authenticated = authenticationManager.authenticate(authToken);
+
+        String name = authenticated.getName();
+        User.Role role = User.Role.valueOf(authenticated.getAuthorities().stream()
+                .findFirst().map(GrantedAuthority::getAuthority).orElse("USER"));
+        String token = jwtUtil.generateToken(name, role);
+        stringRedisTemplate.opsForValue().set("token:" + name, token, expiration, TimeUnit.MILLISECONDS);
+        return new LoginResponse(token, name, role);
+    }
+
+    /**
+     * 用户注册
+     */
+    public UserResponse register(RegisterRequest request) {
+        // 组装User
+        User user = new User();
+        user.setUsername(request.username());
+        user.setPassword(request.password());
+        user.setRealName(request.realName());
+        user.setPhone(request.phone());
+        user.setRole(User.Role.USER);
+
+        if (userService.isUserExists(request.username())) {
+            throw new BusinessException(ErrorCode.INVALID_VALUE, String.format("用户名 %s 已存在", user.getUsername()));
+        }
+
+        // 进行密码加密
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 返回到前端的数据不能含密码
+        return UserResponse.from(userService.save(user));
+    }
+
+    /**
+     * 获取当前登录用户信息
+     */
+    public UserResponse currentUser() {
+        // 返回到前端的数据不能含密码
+        return UserResponse.from(securityUtil.getCurrentUser());
+    }
+
+    /**
+     * 修改当前用户信息
+     */
+    public UserResponse updateProfile(UpdateUserRequest request) {
+        // 获取
+        User user = securityUtil.getCurrentUser();
+
+        // 修改
+        if (request.realName() != null) user.setRealName(request.realName());
+        if (request.phone() != null) user.setPhone(request.phone());
+
+        // 保存
+        return UserResponse.from(userService.save(user));
+    }
+
+    /**
+     * 登出用户
+     */
+    public void logout() {
+        User user = securityUtil.getCurrentUser();
+        if (user == null) return;
+        String username = user.getUsername();
+        if (username == null) return;
+
+        stringRedisTemplate.delete("token:" + username);
+        SecurityContextHolder.clearContext();
+    }
+}
