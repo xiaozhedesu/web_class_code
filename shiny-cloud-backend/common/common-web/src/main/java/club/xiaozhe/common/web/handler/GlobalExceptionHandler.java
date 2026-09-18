@@ -1,4 +1,4 @@
-package club.xiaozhe.shinycloud.exception;
+package club.xiaozhe.common.web.handler;
 
 import club.xiaozhe.common.constant.ErrorCode;
 import club.xiaozhe.common.result.Result;

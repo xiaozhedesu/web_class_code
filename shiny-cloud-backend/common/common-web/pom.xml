@@ -18,6 +18,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>club.xiaozhe</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
         <!-- Spring MVC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
