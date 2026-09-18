@@ -1,8 +1,8 @@
 package club.xiaozhe.shinycloud.util;
 
 import club.xiaozhe.shinycloud.entity.User;
-import club.xiaozhe.common.exception.BusinessException;
-import club.xiaozhe.common.constant.ErrorCode;
+import club.xiaozhe.shinycloud.common.exception.BusinessException;
+import club.xiaozhe.shinycloud.common.constant.ErrorCode;
 import club.xiaozhe.shinycloud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

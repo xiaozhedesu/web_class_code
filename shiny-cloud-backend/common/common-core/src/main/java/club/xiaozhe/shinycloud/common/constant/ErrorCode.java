@@ -1,4 +1,4 @@
-package club.xiaozhe.common.constant;
+package club.xiaozhe.shinycloud.common.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

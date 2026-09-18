@@ -1,8 +1,8 @@
-package club.xiaozhe.common.web.handler;
+package club.xiaozhe.shinycloud.common.web.handler;
 
-import club.xiaozhe.common.constant.ErrorCode;
-import club.xiaozhe.common.result.Result;
-import club.xiaozhe.common.exception.BusinessException;
+import club.xiaozhe.shinycloud.common.constant.ErrorCode;
+import club.xiaozhe.shinycloud.common.result.Result;
+import club.xiaozhe.shinycloud.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package club.xiaozhe.gateway;
+package club.xiaozhe.shinycloud.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

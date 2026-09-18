@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.controller;
 
-import club.xiaozhe.common.result.Result;
+import club.xiaozhe.shinycloud.common.result.Result;
 import club.xiaozhe.shinycloud.dto.UpdateUserRequest;
 import club.xiaozhe.shinycloud.dto.UserPageResponse;
 import club.xiaozhe.shinycloud.dto.UserResponse;

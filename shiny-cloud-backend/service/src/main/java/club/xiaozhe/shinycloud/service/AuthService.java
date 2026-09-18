@@ -2,8 +2,8 @@ package club.xiaozhe.shinycloud.service;
 
 import club.xiaozhe.shinycloud.dto.*;
 import club.xiaozhe.shinycloud.entity.User;
-import club.xiaozhe.common.exception.BusinessException;
-import club.xiaozhe.common.constant.ErrorCode;
+import club.xiaozhe.shinycloud.common.exception.BusinessException;
+import club.xiaozhe.shinycloud.common.constant.ErrorCode;
 import club.xiaozhe.shinycloud.util.JwtUtil;
 import club.xiaozhe.shinycloud.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.config;
 
-import club.xiaozhe.common.result.Result;
+import club.xiaozhe.shinycloud.common.result.Result;
 import club.xiaozhe.shinycloud.entity.User;
 import club.xiaozhe.shinycloud.filter.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
