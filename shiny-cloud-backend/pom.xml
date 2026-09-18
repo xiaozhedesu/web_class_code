@@ -52,7 +52,7 @@
             <!-- 关于自己的项目依赖项 -->
             <dependency>
                 <groupId>club.xiaozhe</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>common-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
