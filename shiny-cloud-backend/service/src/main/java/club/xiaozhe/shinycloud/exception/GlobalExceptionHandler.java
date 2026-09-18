@@ -1,6 +1,6 @@
 package club.xiaozhe.shinycloud.exception;
 
-import club.xiaozhe.shinycloud.dto.Result;
+import club.xiaozhe.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

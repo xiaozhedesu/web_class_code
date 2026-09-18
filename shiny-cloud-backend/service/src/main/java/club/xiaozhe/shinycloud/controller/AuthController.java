@@ -19,8 +19,8 @@ public class AuthController {
      * @apiNote POST /api/auth/login
      */
     @PostMapping("/auth/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return Result.success(authService.login(request));
+    public club.xiaozhe.common.result.Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return club.xiaozhe.common.result.Result.success(authService.login(request));
     }
 
     /**
@@ -29,8 +29,8 @@ public class AuthController {
       @apiNote POST /api/auth/register
      */
     @PostMapping("/auth/register")
-    public Result<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return Result.success(authService.register(request));
+    public club.xiaozhe.common.result.Result<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return club.xiaozhe.common.result.Result.success(authService.register(request));
     }
 
     /**
@@ -39,8 +39,8 @@ public class AuthController {
       @apiNote GET /api/user/me
      */
     @GetMapping("/user/me")
-    public Result<UserResponse> currentUser() {
-        return Result.success(authService.currentUser());
+    public club.xiaozhe.common.result.Result<UserResponse> currentUser() {
+        return club.xiaozhe.common.result.Result.success(authService.currentUser());
     }
 
     /**
@@ -49,8 +49,8 @@ public class AuthController {
      * @apiNote PUT /api/user/me
      */
     @PutMapping("/user/me")
-    public Result<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
-        return Result.success(authService.updateProfile(request));
+    public club.xiaozhe.common.result.Result<UserResponse> updateProfile(@RequestBody @Valid UpdateUserRequest request) {
+        return club.xiaozhe.common.result.Result.success(authService.updateProfile(request));
     }
 
     /**
@@ -58,8 +58,8 @@ public class AuthController {
      * @apiNote POST /api/user/logout
      */
     @PostMapping("/user/logout")
-    public Result<Void> logout() {
+    public club.xiaozhe.common.result.Result<Void> logout() {
         authService.logout();
-        return Result.success(null);
+        return club.xiaozhe.common.result.Result.success(null);
     }
 }

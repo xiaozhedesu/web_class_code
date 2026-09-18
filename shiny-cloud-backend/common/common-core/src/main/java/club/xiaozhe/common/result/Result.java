@@ -1,4 +1,4 @@
-package club.xiaozhe.shinycloud.dto;
+package club.xiaozhe.common.result;
 
 /**
  * 通用返回结构
