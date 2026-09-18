@@ -19,17 +19,9 @@
             <artifactId>common-core</artifactId>
         </dependency>
 
-        <!-- Spring MVC -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <!-- 排除logging依赖 -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>club.xiaozhe</groupId>
+            <artifactId>common-web</artifactId>
         </dependency>
 
         <dependency>
