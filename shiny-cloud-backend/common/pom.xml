@@ -11,8 +11,12 @@
     </parent>
 
     <artifactId>common</artifactId>
+    <packaging>pom</packaging>
     <name>common</name>
     <description>项目的公有库</description>
+    <modules>
+        <module>common-core</module>
+    </modules>
 
     <dependencies>
         <dependency>
