@@ -107,12 +107,6 @@
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
-        <!-- 公共模块 -->
-        <dependency>
-            <groupId>club.xiaozhe</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
-
         <!-- 工具类 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
