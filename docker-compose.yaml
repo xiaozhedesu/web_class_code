@@ -8,7 +8,7 @@ services:
   # PostgreSQL 数据库服务
   postgres:
     image: postgres:16-alpine
-    container_name: csm-postgres
+    container_name: sc-postgres
     environment:
       POSTGRES_DB: cloud_server
       POSTGRES_USER: root
@@ -25,7 +25,7 @@ services:
   # Redis服务
   redis:
     image: redis:7.4-alpine
-    container_name: csm-redis
+    container_name: sc-redis
     volumes:
       - redisdata:/data
     restart: always
@@ -38,9 +38,10 @@ services:
       timeout: 3s
       retries: 5
 
+  # Nacos Server 服务
   nacos:
     image: nacos/nacos-server:v3.1.1
-    container_name: csm-nacos
+    container_name: sc-nacos
     environment:
       MODE: standalone
       # 开启鉴权
@@ -66,7 +67,7 @@ services:
     build:
       context: ./shiny-cloud-backend
       dockerfile: gateway/Dockerfile
-    container_name: csm-gateway
+    container_name: sc-gateway
     depends_on:
       nacos:
         condition: service_healthy
@@ -85,7 +86,7 @@ services:
     build: 
       context: ./shiny-cloud-backend
       dockerfile: service/Dockerfile
-    container_name: csm-service
+    container_name: sc-service
     depends_on:
       postgres:
         condition: service_healthy
@@ -110,7 +111,7 @@ services:
   # 前端服务
   frontend:
     build: ./shiny-cloud-frontend
-    container_name: csm-frontend
+    container_name: sc-frontend
     depends_on:
       - gateway
     ports:
