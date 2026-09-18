@@ -1,6 +1,8 @@
 package club.xiaozhe.shinycloud.exception;
 
+import club.xiaozhe.common.constant.ErrorCode;
 import club.xiaozhe.common.result.Result;
+import club.xiaozhe.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

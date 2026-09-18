@@ -1,5 +1,6 @@
-package club.xiaozhe.shinycloud.exception;
+package club.xiaozhe.common.exception;
 
+import club.xiaozhe.common.constant.ErrorCode;
 import lombok.Getter;
 
 /**

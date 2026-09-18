@@ -1,4 +1,4 @@
-package club.xiaozhe.shinycloud.exception;
+package club.xiaozhe.common.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
