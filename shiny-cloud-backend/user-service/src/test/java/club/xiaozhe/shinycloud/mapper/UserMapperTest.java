@@ -2,15 +2,16 @@ package club.xiaozhe.shinycloud.mapper;
 
 import club.xiaozhe.shinycloud.entity.User;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -20,23 +21,45 @@ public class UserMapperTest {
     @Autowired
     private UserMapper userMapper;
 
-    /**
-     * 连通性测试
-     * id = 1 为默认admin账号，应当一直存在
-     */
-    @Test
-    void connectionTest() {
-        User user = User.builder()
+    private User testUser;
+
+    @BeforeEach
+    void createTestUserAccount() {
+        testUser = User.builder()
                 .username("test_user")
+                .password("123456")
+                .realName("测试用户")
+                .role(User.Role.USER)
+                .createTime(LocalDateTime.now())
+                .build();
+        userMapper.insert(testUser);
+    }
+
+    @Test
+    void selectTestUserByIdTest() {
+        User selected = userMapper.selectById(testUser.getId());
+        assertNotNull(selected);
+
+        assertEquals(testUser.getUsername(), selected.getUsername());
+    }
+
+    @Test
+    void selectTestUserByUsernameTest() {
+        User selected = userMapper.selectByUsername(testUser.getUsername());
+        assertNotNull(selected);
+
+        assertEquals(testUser.getUsername(), selected.getUsername());
+    }
+
+    @Test
+    void testUserShouldUniqueTest() {
+        User user = User.builder()
+                .username(testUser.getUsername())
                 .password("123456")
                 .role(User.Role.USER)
                 .createTime(LocalDateTime.now())
                 .build();
-        userMapper.insert(user);
 
-        User selected = userMapper.selectById(user.getId());
-        assertNotNull(selected);
-
-        assertEquals(user.getUsername(), selected.getUsername());
+        assertThrows(DuplicateKeyException.class, () -> userMapper.insert(user));
     }
 }
