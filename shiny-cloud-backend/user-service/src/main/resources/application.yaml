@@ -14,3 +14,12 @@ spring:
       driver-class-name: org.postgresql.Driver
       username: ${DB_USERNAME:root}
       password: ${DB_PASSWORD:postgres}
+
+    mybatis-plus:
+      mapper-locations: classpath:mapper/*.xml
+      type-aliases-package: club.xiaozhe.shinycloud
+      configuration:
+        map-underscore-to-camel-case: true
+      global-config:
+        db-config:
+          table-prefix: t_    # 适配表名用t_开头
