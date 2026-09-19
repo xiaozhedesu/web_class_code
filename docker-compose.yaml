@@ -64,7 +64,9 @@ services:
   gateway:
     build:
       context: ./shiny-cloud-backend
-      dockerfile: gateway/Dockerfile
+      dockerfile: Dockerfile
+      args: 
+        MODULE: gateway
     container_name: sc-gateway
     depends_on:
       nacos:
@@ -80,7 +82,9 @@ services:
   service:
     build: 
       context: ./shiny-cloud-backend
-      dockerfile: service/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        MODULE: service
     container_name: sc-service
     depends_on:
       postgres:
