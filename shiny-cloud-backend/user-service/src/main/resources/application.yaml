@@ -15,11 +15,12 @@ spring:
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:postgres}
 
-  mybatis-plus:
-    mapper-locations: classpath:mapper/*.xml
-    type-aliases-package: club.xiaozhe.shinycloud
-    configuration:
-      map-underscore-to-camel-case: true
-    global-config:
-      db-config:
-        table-prefix: t_    # 适配表名用t_开头
+# mybatis-plus 配置应当是顶级配置，不在 spring 下！
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: club.xiaozhe.shinycloud
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      table-prefix: t_    # 适配表名用t_开头
