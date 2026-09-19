@@ -1,5 +1,6 @@
 package club.xiaozhe.shinycloud.mapper;
 
+import club.xiaozhe.shinycloud.common.constant.UserRole;
 import club.xiaozhe.shinycloud.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class UserMapperTest {
                 .username("test_user")
                 .password("123456")
                 .realName("测试用户")
-                .role(User.Role.USER)
+                .role(UserRole.USER)
                 .createTime(LocalDateTime.now())
                 .build();
         userMapper.insert(testUser);
@@ -56,7 +57,7 @@ public class UserMapperTest {
         User user = User.builder()
                 .username(testUser.getUsername())
                 .password("123456")
-                .role(User.Role.USER)
+                .role(UserRole.USER)
                 .createTime(LocalDateTime.now())
                 .build();
 

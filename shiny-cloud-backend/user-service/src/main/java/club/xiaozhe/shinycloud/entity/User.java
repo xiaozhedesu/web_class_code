@@ -1,5 +1,6 @@
 package club.xiaozhe.shinycloud.entity;
 
+import club.xiaozhe.shinycloud.common.constant.UserRole;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
@@ -20,14 +21,6 @@ public class User {
     private String password;
     private String realName;
     private String phone;
-    private Role role;
+    private UserRole role;
     private LocalDateTime createTime;
-
-    // FIXME 若被多个服务复用,考虑提取到 common 并改名 UserRole。
-    /**
-     * 用户存在两种身份，使用枚举表示
-     */
-    public enum Role {
-        ADMIN, USER
-    }
 }
