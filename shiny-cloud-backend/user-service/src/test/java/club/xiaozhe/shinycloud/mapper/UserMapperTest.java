@@ -65,4 +65,14 @@ public class UserMapperTest {
 
         assertThrows(DuplicateKeyException.class, () -> userMapper.insert(user));
     }
+
+    @Test
+    void shouldExistsTest() {
+        assertTrue(userMapper.isExists(testUser.getUsername()));
+    }
+
+    @Test
+    void shouldNotExistsTest() {
+        assertFalse(userMapper.isExists(testUser.getUsername() + "_test"));
+    }
 }
