@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,9 +49,14 @@ public class AuthService {
      * 用户登录
      */
     public LoginResponse login(LoginRequest request) {
-        Authentication authenticated = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password())
-        );
+        Authentication authenticated;
+        try {
+            authenticated = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.username(), request.password())
+            );
+        } catch (AuthenticationException e) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR, e.getMessage());
+        }
 
         UserDetails user = (UserDetails) authenticated.getPrincipal();
         Objects.requireNonNull(user, "principal should not be null");

@@ -18,7 +18,7 @@ public enum ErrorCode {
     /* ----- OTHER ----- */
     UNAUTHORIZED(1004, "未授权的操作: %s", HttpStatus.UNAUTHORIZED),
     INVALID_VALUE(1005, "发现数据错误: %s", HttpStatus.BAD_REQUEST),
-    USERNAME_OR_PASSWORD_ERROR(1006, "用户名或密码错误！", HttpStatus.UNAUTHORIZED),
+    LOGIN_ERROR(1006, "发生登录错误: %s", HttpStatus.UNAUTHORIZED),
     STATUS_UNDEFINED(1007, "状态码无效: %s", HttpStatus.BAD_REQUEST),
 
     /* ----- UNKNOWN ----- */
