@@ -13,6 +13,10 @@ spring:
       server:
         webflux:
           routes:
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/auth/**,/api/user/**
             # 目前未做项目分离，将所有路径都发往service
             - id: service
               uri: lb://service
