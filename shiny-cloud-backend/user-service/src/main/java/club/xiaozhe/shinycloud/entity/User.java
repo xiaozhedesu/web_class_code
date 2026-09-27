@@ -1,7 +1,9 @@
 package club.xiaozhe.shinycloud.entity;
 
 import club.xiaozhe.shinycloud.common.constant.UserRole;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +24,6 @@ public class User {
     private String realName;
     private String phone;
     private UserRole role;
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 }
